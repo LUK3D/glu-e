@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { IApp } from '../types'
+import { IApp, IColumn } from '../types'
 
 
 
@@ -78,6 +78,25 @@ export const useAppStore = create<IApp>((set, get) => ({
         ]
     });
     set(()=>({tables:tables}));
+    return true;
+ },
+
+ createColumn:function (table:string,column:IColumn){
+    const tables = get().tables.filter((x)=>x.name == table);
+    if(tables.length<=0){
+      return;
+    }
+
+    const columns = tables[0].columns;
+    tables[0].columns = [...columns, column];
+
+    set((e)=>({tables:e.tables.map((t)=>{
+        if(t.name == table){
+            return tables[0];
+        }else{
+            return t;
+        }
+    })}));
     return true;
  },
  toggleTable: function (name:string){

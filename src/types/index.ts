@@ -36,6 +36,11 @@ export interface Itable{
     comment?:string
 }
 
+export interface ISelectItem{
+    label:string,
+    value:any
+}
+
 
 /**
  * ## IApp 🚀
@@ -46,5 +51,6 @@ export interface IApp{
     tables:Array<Itable>,
     setWorkspace: Function,
     createTable: Function,
+    createColumn: Function,
     toggleTable: Function,
 }

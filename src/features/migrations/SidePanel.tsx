@@ -1,25 +1,37 @@
 import { TableCellsIcon } from "@heroicons/react/20/solid";
-import { MagnifyingGlassCircleIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassCircleIcon, FolderIcon, } from "@heroicons/react/24/outline";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import OutlinerItem from "./components/outlinerItem";
-import { IApp, Itable } from "../../types";
+import { IApp, IColumn, Itable } from "../../types";
 import Modal from "../../components/modal";
 import { useState } from "react";
 import { validateTableName } from "../../utls/validator";
+import NewTableForm from "./components/newTableForm";
+
 
 interface ISidePanel{
     appStore:IApp
+}
+
+interface IColumnComposition{
+    table:string,
+    column:string
 }
 export  function SidePanel(args:ISidePanel) {
 
     const [creatingTable, setCreatingTable] = useState<boolean>(false);
     const [tableNameInput, setTableNameInput] = useState<string>('');
+    const [creatingColumn, setCreatingColumn] = useState<boolean>(false);
+    const [columnNameInput, setColumnNameInput] = useState<IColumnComposition>({table:'', column:''});
+
+
 
 
     const cancelTableCreation = ()=>{
         setTableNameInput('');
         setCreatingTable(false);
     }
+    
     const createTable = ()=>{
         if(!validateTableName(tableNameInput) ){
             console.error("You must provide a valid name for this table: ", tableNameInput);
@@ -30,8 +42,29 @@ export  function SidePanel(args:ISidePanel) {
         if(!result){
             return;
         }
-        setCreatingTable(false);
-        setTableNameInput('');
+        cancelTableCreation();
+    }
+
+    const cancelColumnCreation = ()=>{
+        setColumnNameInput({table:'', column:''});
+        setCreatingColumn(false);
+    }
+
+    const createColumn = (column: IColumn)=>{
+        console.log(column);
+
+        if(!validateTableName(columnNameInput.table) ||  !validateTableName(column.name)){
+            console.error("You must provide a valid Table and Column name: ", columnNameInput);
+            return;
+        }
+
+
+        const result = args.appStore.createColumn(columnNameInput.table, column);
+
+        if(!result){
+            return;
+        }
+        cancelColumnCreation();
     }
 
   return (
@@ -44,7 +77,7 @@ export  function SidePanel(args:ISidePanel) {
     body={
         <div className="w-full flex flex-col mt-10">
             <div className="w-full  flex items-center bg-black-200 bg-opacity-50 rounded-md px-2">
-                <TableCellsIcon width={20} className="text-primary"></TableCellsIcon>
+                <FolderIcon width={20} className="text-primary"></FolderIcon>
                 <input 
                     type="text" 
                     placeholder="Table name" 
@@ -71,6 +104,15 @@ export  function SidePanel(args:ISidePanel) {
         </div>
     }
     ></Modal>
+    <Modal 
+    isOpen={creatingColumn} 
+    onCloseDialog={()=>setCreatingColumn(false)}
+    tittle='🚀 New Column'
+    description='A name for a column should be short and auto explain'
+    body={
+       <NewTableForm onCancel={cancelColumnCreation} onComplete={createColumn} ></NewTableForm>
+    }
+    ></Modal>
     <div className="flex flex-col h-full w-full">
         <div className="w-full   p-5   flex flex-col">
             <div className="w-full  flex items-center bg-black-100 bg-opacity-25 rounded-md px-2">
@@ -91,7 +133,10 @@ export  function SidePanel(args:ISidePanel) {
         </div>
         <div className="w-full h-full overflow-y-auto bg-black-200 bg-gradient-radial bg-radial-black-transparent bg-radial-size bg-radial-position">
             <ul>
-                {args.appStore.tables.map((table)=><OutlinerItem key={`table_${table.name}`} table={table} onTableClick={(t:Itable)=>args.appStore.toggleTable(t.name)}></OutlinerItem>)}
+                {args.appStore.tables.map((table)=><OutlinerItem onAddColumnClick={()=>{
+                    setColumnNameInput({...columnNameInput, table:table.name});
+                    setCreatingColumn(true);
+                }} key={`table_${table.name}`} table={table} onTableClick={(t:Itable)=>args.appStore.toggleTable(t.name)}></OutlinerItem>)}
                
             </ul>
 
