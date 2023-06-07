@@ -10,8 +10,8 @@ import { ModelSidePanel, ModelWorkspace } from './features/models';
 interface ITab{
   label:string,
   icon:ReactNode,
-  sidePannel:Function,
-  workspace: Function,
+  sidePannel:any,
+  workspace: any,
 }
 
 
