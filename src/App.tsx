@@ -1,6 +1,6 @@
-import { Squares2X2Icon, ArrowPathIcon, SquaresPlusIcon, BoltIcon } from '@heroicons/react/24/outline'
+import { Squares2X2Icon, ArrowPathIcon } from '@heroicons/react/24/outline'
 import './App.css'
-import { ReactNode, useState } from 'react'
+import { ReactNode} from 'react'
 import { SidePanel, Workspace } from './features/migrations';
 import { useAppStore } from './store';
 import { ModelSidePanel, ModelWorkspace } from './features/models';
