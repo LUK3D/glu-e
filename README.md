@@ -8,7 +8,7 @@
 
 Glu-e is an open-source web application that allows you to effortlessly generate REST APIs using Laravel and, in the future, will support Node.js as well. It is built with Vite, React, TypeScript, Zustand, and Tailwind CSS, providing a powerful and flexible development stack for creating robust APIs.
 
-![Glu-e screenshot](screenshots/SC2023-06-07-165241.png)
+![Glu-e screenshot](screenshots/03.png)
 
 ## Key Features 🚀
 

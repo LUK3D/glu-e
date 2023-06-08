@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { IApp, IColumn } from '../types'
+import { Edge, Node } from 'reactflow';
 
 
 
@@ -58,6 +59,8 @@ export const useAppStore = create<IApp>((set, get) => ({
     }
  
  ],
+ migrationsEdges:[],
+ migrationsNodes:[],
  setWorkspace: (w:string)=>set(()=>({workspace:w})),
  createTable: function (tableName:string){
     const tables = get().tables;
@@ -112,6 +115,11 @@ export const useAppStore = create<IApp>((set, get) => ({
     }));
 
  },
- 
-
+ setMigrationEdges:(edges:Edge<any>[])=>{
+    console.log(edges)
+    set(()=>({migrationsEdges:edges}));
+ },
+ setMigrationNodes:(nodes:Node<{label: string;}, string | undefined>[])=>{
+    set(()=>({migrationsNodes:nodes}));
+ }
 }))

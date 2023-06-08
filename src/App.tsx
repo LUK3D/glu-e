@@ -1,4 +1,5 @@
 import { Squares2X2Icon, ArrowPathIcon } from '@heroicons/react/24/outline'
+import 'reactflow/dist/style.css';
 import './App.css'
 import { ReactNode} from 'react'
 import { SidePanel, Workspace } from './features/migrations';
@@ -71,7 +72,7 @@ function App() {
         ))}
       </div>
       <div className='workspace flex flex-col w-full h-full bg-gradient-radial bg-radial-black-transparent bg-radial-size bg-radial-position '>
-      {tabs.map((tab)=>(tab.label == appStore.workspace ?<tab.workspace key={`workspace_${tab.label}`}></tab.workspace>:<></>))}
+      {tabs.map((tab)=>(tab.label == appStore.workspace ?<tab.workspace key={`workspace_${tab.label}`} appStore={appStore}></tab.workspace>:<></>))}
       </div>
     </div>
    </div>

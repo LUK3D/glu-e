@@ -1,9 +1,11 @@
-import { CodeBracketSquareIcon } from "@heroicons/react/24/outline";
+// import { CodeBracketSquareIcon } from "@heroicons/react/24/outline";
+import { IApp } from "../../types";
+import MigrationsCanvas from "./canvas";
 
-export  function Workspace() {
+export  function Workspace(props:{appStore:IApp}) {
   return (
-    <div className="w-full h-full overflow-y-auto flex flex-col p-5">
-        <table className="w-full">
+    <div className="w-full h-full overflow-y-auto flex flex-col ">
+        {/* <table className="w-full">
         <tbody className="flex flex-col  rounded-lg overflow-hidden ">
             <tr className="bg-white even:bg-black-200 odd:bg-black-400 flex even:bg-opacity-25 odd:bg-opacity-25">
                 <td className="pl-2 py-1 flex text-primary">
@@ -27,7 +29,9 @@ export  function Workspace() {
                 <td className="px-2 py-1">Teste basico</td>
             </tr>
         </tbody>
-        </table>
+        </table> */}
+
+        <MigrationsCanvas appSatore={props.appStore}></MigrationsCanvas>
     </div>
   )
 }

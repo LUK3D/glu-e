@@ -139,9 +139,7 @@ export  function SidePanel(args:ISidePanel) {
                 }} key={`table_${table.name}`} table={table} onTableClick={(t:Itable)=>args.appStore.toggleTable(t.name)}></OutlinerItem>)}
                
             </ul>
-
         </div>
-
     </div>
     </>
   )

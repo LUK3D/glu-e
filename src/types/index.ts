@@ -1,4 +1,9 @@
 
+import {
+
+    Edge,
+    Node
+  } from 'reactflow';
 /**
  * ## IColumn 🚀
  * Represents a column in a database table.
@@ -49,6 +54,11 @@ export interface ISelectItem{
 export interface IApp{
     workspace:string,
     tables:Array<Itable>,
+    migrationsNodes:Node<{label: string;}, string | undefined>[],
+    migrationsEdges:Edge<any>[],
+    setMigrationNodes: Function,
+    setMigrationEdges: Function,
+
     setWorkspace: Function,
     createTable: Function,
     createColumn: Function,
