@@ -2,7 +2,7 @@ import {
     Node,
     Edge
   } from 'reactflow';
-import { IRelation } from '../types';
+import { IRelation, RelatioError } from '../types';
 
 
 
@@ -13,14 +13,17 @@ import { IRelation } from '../types';
  * @param args 
  * @returns 
  */
-export function validateNode(args:{nodes:Node[], edges:Edge[], init: boolean}){
+export function validateNode(args:{nodes:Node[], edges:Edge[], init: boolean}):[IRelation[], boolean]{
     let result: IRelation[] = [];
+
+    let hasBugs = false;
   
     if(args.nodes.length<=0 || args.edges.length <=0){
-        return result;
+        return [result, hasBugs];
     }
 
     let relation:IRelation = {
+        errors:[]
     }
 
     for (let i = 0; i < args.nodes.length; i++) {
@@ -40,18 +43,39 @@ export function validateNode(args:{nodes:Node[], edges:Edge[], init: boolean}){
             });
 
             if(relation.from && relation.to){
+
+                if(relation.from.data['column']['type'] != relation.to.data['column']['type']){
+                    relation.errors.push({
+                        type:RelatioError.dataType,
+                        message:`[${relation.from.data['label']}] of type [${relation.from.data['column']['type']}] Can't be related to [${relation.to.data['label']}] of type [${relation.to.data['column']['type']}]`
+                    });
+                    hasBugs = true;
+                }
+
                 result.push(relation);
-                relation = {};
+                relation = {
+                    errors:[]
+                };
             }
             
         });
 
         if(relation.from && relation.to){
+            if(relation.from.data['column']['type'] != relation.to.data['column']['type']){
+                relation.errors.push({
+                    type:RelatioError.dataType,
+                    message:`[${relation.from.data['label']}] of type [${relation.from.data['column']['type']}] Can't be related to [${relation.to.data['label']}] of type [${relation.to.data['column']['type']}]`
+                });
+                hasBugs = true;
+            }
+
             result.push(relation);
-            relation = {};
+            relation = {
+                errors:[]
+            };
         }
     }
-   
-    return result;
+
+    return [result, hasBugs];;
     
 }

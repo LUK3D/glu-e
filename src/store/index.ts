@@ -84,6 +84,31 @@ export const useAppStore = create<IApp>((set, get) => ({
     return true;
  },
  setRelations:(relations: IRelation[])=>set(()=>({relations:relations})),
+ updateForeigns:()=>{
+    let tables = get().tables;
+
+    var foreigns = get().relations.map((r)=>r.from?.data['column']['name']);
+
+    tables = tables.map((table)=>{
+        let t = table;
+        t.columns =  t.columns.map(column => {
+
+            if(foreigns.includes(column.name)){
+                column.isForeign = true;
+            }else{
+                column.isForeign = false;
+            }
+
+            return column;
+            
+        });
+
+        return t;
+    });
+
+    set(()=>({tables:tables}));
+    console.log(tables);
+ },
  createColumn: (table:string,column:IColumn)=>{
     const tables = get().tables.filter((x)=>x.name == table);
     if(tables.length<=0){
@@ -118,7 +143,7 @@ export const useAppStore = create<IApp>((set, get) => ({
  setMigrationEdges:(edges:Edge<any>[])=>{
     set(()=>({migrationsEdges:edges}));
  },
- setMigrationNodes:(nodes:Node<{label: string;}, string | undefined>[])=>{
+ setMigrationNodes:(nodes:Node<{label: string; column?:IColumn}, string | undefined>[])=>{
     set(()=>({migrationsNodes:nodes}));
  }
 }))

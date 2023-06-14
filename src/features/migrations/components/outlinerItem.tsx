@@ -29,8 +29,8 @@ export default function OutlinerItem(args:{table:Itable, onTableClick:Function, 
             {args.table.columns.map((column)=>(
                 <li key={column.name} className="pl-1  py-2 flex flex-col border-l border-black-300" onDragStart={(event) => onDragStart(event, 'table', column)} draggable>
                     <div className="flex items-center ">
-                        {column.primaryKey?<KeyIcon width={15} className="text-yellow-500"></KeyIcon> : <DocumentTextIcon width={20}></DocumentTextIcon> }
-                            <p className="ml-2">{column.name} <span className="text-xs text-yellow-500 text-opacity-50">({column.type})</span></p>
+                        {column.primaryKey?<KeyIcon width={15} className="text-yellow-500"></KeyIcon> : (column.isForeign ? <KeyIcon width={15} className="text-primary"></KeyIcon>: <DocumentTextIcon width={20}></DocumentTextIcon>) }
+                        <p className="ml-2">{column.name} <span className="text-xs text-yellow-500 text-opacity-50">({column.type})</span></p>
                     </div>
                 </li>
             ))}

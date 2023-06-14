@@ -40,8 +40,12 @@ export default function Canvas(props:{appSatore:IApp}) {
         props.appSatore.setMigrationNodes(nodes);
         props.appSatore.setMigrationEdges(edges);
 
-        var result =  validateNode({nodes:[...nodes], edges:[...edges], init:true});
+        const [result,hasBug] = validateNode({nodes:[...nodes], edges:[...edges], init:true});
+        
         props.appSatore.setRelations(result);
+        if(result.length>0){
+          props.appSatore.updateForeigns();
+        }
         console.log('RESULT:',result); // This is
     }, [edges]);
 
@@ -105,9 +109,12 @@ export default function Canvas(props:{appSatore:IApp}) {
             position,
             data: { 
                 label: `${table.name}.${column.name}`,
+                column:column,
                 event:onAddNode
             },
           };
+
+          console.log(newNode)
     
           setNodes((nds) => nds.concat(newNode));
         },

@@ -21,6 +21,8 @@ export interface IColumn {
     defaultValue?: any,
     /** (Optional) Indicates whether the column is a primary key. */
     primaryKey?: boolean,
+    /** (Optional) Indicates whether the column is a foreign key. */
+    isForeign?: boolean,
     /** (Optional) Indicates whether the column auto-increments. */
     autoIncrement?: boolean,
     /** (Optional) Indicates whether the column has a unique constraint. */
@@ -47,10 +49,19 @@ export interface ISelectItem{
 }
 
 
+export enum RelatioError{
+  dataType = 'DATA_TYPE'
+}
+export interface IRelationError{
+  type:RelatioError,
+  message:string
+}
+
 export interface IRelation{
   from?:Node,
   to?:Node,
-  mode?:number
+  mode?:number,
+  errors:IRelationError[]
 }
 
 
@@ -61,7 +72,7 @@ export interface IRelation{
 export interface IApp{
     workspace:string,
     tables:Array<Itable>,
-    migrationsNodes:Node<{label: string;}, string | undefined>[],
+    migrationsNodes:Node<{label: string; column?:IColumn, invalid?:boolean}, string | undefined>[],
     migrationsEdges:Edge<any>[],
     relations:IRelation[],
     setMigrationNodes: Function,
@@ -72,4 +83,5 @@ export interface IApp{
     createColumn: (table:string,column:IColumn)=>boolean|null,
     /**Toggles the table element in outline */
     toggleTable: (name:string)=>void,
+    updateForeigns: ()=>void,
 }
