@@ -13,7 +13,7 @@ import { IRelation, RelatioError } from '../types';
  * @param args 
  * @returns 
  */
-export function validateNode({ nodes, edges, init }: { nodes: Node[]; edges: Edge[]; init: boolean }): [IRelation[], boolean] {
+export function validateNode({ nodes, edges }: { nodes: Node[]; edges: Edge[]}): [IRelation[], boolean] {
     let result: IRelation[] = [];
 
     let hasBugs = false;
