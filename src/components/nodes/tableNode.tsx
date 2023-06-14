@@ -1,4 +1,5 @@
-import { DocumentTextIcon, PlusIcon} from "@heroicons/react/24/outline";
+import { DocumentTextIcon,  PlusIcon, ExclamationTriangleIcon} from "@heroicons/react/24/outline";
+import { } from "@heroicons/react/24/solid";
 import { NodeProps, Handle, Position } from "reactflow";
 
 
@@ -6,8 +7,28 @@ import { NodeProps, Handle, Position } from "reactflow";
 export default function TableNode(props:NodeProps) {
   return (
     <div 
-        className="bg-primary bg-opacity-50 border-2 border-primary rounded-lg min-w-[200px]  p-4 flex flex-col text-gray-300 relative"
+        className={`
+         
+        bg-opacity-50 border-2 ${props.data['invalid']?'border-dashed':''}
+        border-primary bg-primary rounded-lg min-w-[200px]  
+        p-4 flex flex-col text-gray-300 relative
+        
+        `}
     >
+
+
+      {props.data['invalid'] &&  
+        <div className="rounded-full fixed  top-1 left-1 1 flex justify-center items-center">
+            <div className="rounded-full absolute bg-red-500  p-1 animate-ping w-5 h-5">
+            </div>
+            <div className="rounded-full absolute bg-red-500  p-1 w-6 h-6 ">
+                <ExclamationTriangleIcon ></ExclamationTriangleIcon>
+            </div>
+        </div>
+        }
+
+
+
         <div className="w-full  flex items-center ">
         <DocumentTextIcon width={20}></DocumentTextIcon>
             <p className="ml-2 font-bold">{props.data.label.split('.')[0]}.<span className="text-yellow-500">{props.data.label.split('.')[1]}</span></p>

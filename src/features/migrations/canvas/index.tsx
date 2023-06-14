@@ -7,6 +7,7 @@ import ReactFlow, {
   ReactFlowRefType,
   NodeProps,
   ReactFlowInstance,
+  useReactFlow,
 } from 'reactflow';
 
 import 'reactflow/dist/style.css';
@@ -24,10 +25,17 @@ const NODE_TYPES = {
 let id = 0;
 const getId = () => `dndnode_${id++}`;
 
+let hadBug = false;
+
+
 export default function Canvas(props:{appSatore:IApp}) {
 
     const reactFlowWrapper = useRef<ReactFlowRefType>(null);
     const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance|null>(null);
+
+    const reactFlowInstance2 = useReactFlow();
+
+
     const [nodes, setNodes, onNodesChange] = useNodesState(props.appSatore.migrationsNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(props.appSatore.migrationsEdges);
 
@@ -36,18 +44,55 @@ export default function Canvas(props:{appSatore:IApp}) {
         setEdges((eds) => addEdge(params, eds));
     }, [setEdges]);
 
+
+
+  
     useEffect(() => {
         props.appSatore.setMigrationNodes(nodes);
         props.appSatore.setMigrationEdges(edges);
 
         const [result,hasBug] = validateNode({nodes:[...nodes], edges:[...edges], init:true});
-        
+
+        if(hasBug){
+          let tablesWithErros = result.map((e)=>e.from?.data['label']);
+          hadBug = true;
+         setNodes( nodes.map((n)=>{
+            if(tablesWithErros.includes(n.data.label)){
+              n.data.invalid = true;
+            }else{
+              n.data.invalid = false;
+            }
+            return n;
+          } ))
+          forceReactFlowRefresh();
+        }else{
+
+          if(hadBug){
+            hadBug = false;
+            setNodes( nodes.map((n)=>{
+              n.data.invalid = false;
+              return n;
+            } ));
+            forceReactFlowRefresh();
+          }
+          
+        }
+
+              
         props.appSatore.setRelations(result);
         if(result.length>0){
           props.appSatore.updateForeigns();
         }
         console.log('RESULT:',result); // This is
     }, [edges]);
+
+
+    const forceReactFlowRefresh = ()=>{
+      reactFlowInstance2.setNodes([]);
+      setTimeout(() => {
+        reactFlowInstance2.setNodes(nodes);
+      }, 1); 
+    }
 
 
 
