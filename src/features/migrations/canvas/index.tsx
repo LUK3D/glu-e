@@ -1,19 +1,19 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ReactFlow, {
-  MiniMap,
   Controls,
-  ReactFlowProvider,
   useNodesState,
   useEdgesState,
   addEdge,
   ReactFlowRefType,
   NodeProps,
+  ReactFlowInstance,
 } from 'reactflow';
 
 import 'reactflow/dist/style.css';
 import TableNode from '../../../components/nodes/tableNode';
 import RelationNode from '../../../components/nodes/relationNode';
 import { IApp, IColumn, Itable } from '../../../types';
+import { validateNode } from '../../../core';
 
 
 const NODE_TYPES = {
@@ -27,27 +27,31 @@ const getId = () => `dndnode_${id++}`;
 export default function Canvas(props:{appSatore:IApp}) {
 
     const reactFlowWrapper = useRef<ReactFlowRefType>(null);
-    const [reactFlowInstance, setReactFlowInstance] = useState(null);
-    
+    const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance|null>(null);
     const [nodes, setNodes, onNodesChange] = useNodesState(props.appSatore.migrationsNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(props.appSatore.migrationsEdges);
 
+
     const onConnect = useCallback((params:any) =>{
-        console.log("PARAMS:",params);
         setEdges((eds) => addEdge(params, eds));
     }, [setEdges]);
 
     useEffect(() => {
         props.appSatore.setMigrationNodes(nodes);
         props.appSatore.setMigrationEdges(edges);
-        console.log(edges);
+
+        var result =  validateNode({nodes:[...nodes], edges:[...edges], init:true});
+        props.appSatore.setRelations(result);
+        console.log('RESULT:',result); // This is
     }, [edges]);
+
 
 
     const onDragOver = useCallback((event:any) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'move';
       }, []);
+
 
 
 
@@ -66,7 +70,6 @@ export default function Canvas(props:{appSatore:IApp}) {
             setEdges((eds) => addEdge({source: props.id, sourceHandle: 'right', target: newNode.id, targetHandle: 'left'}, eds));   
         }, 100);
         
-        console.log(props);
       }
 
 
@@ -86,14 +89,13 @@ export default function Canvas(props:{appSatore:IApp}) {
           const type = data.type;
           const table:Itable = data.table;
           const column:IColumn = data.column;
-          console.log(data)
     
           // check if the dropped element is valid
           if (typeof type === 'undefined' || !type) {
             return;
           }
-        //@ts-ignore
-          const position = reactFlowInstance.project({
+        
+          const position = reactFlowInstance!.project({
             x: event.clientX - reactFlowBounds.left,
             y: event.clientY - reactFlowBounds.top,
           });
@@ -112,12 +114,11 @@ export default function Canvas(props:{appSatore:IApp}) {
         [reactFlowInstance]
       );
 
-
-
+      
+    
 
   return (
     <div className='w-full h-full'>
-        <ReactFlowProvider>
             <div className="reactflow-wrapper w-full h-full" ref={reactFlowWrapper}>
                 <ReactFlow
                     nodeTypes={NODE_TYPES}
@@ -126,17 +127,14 @@ export default function Canvas(props:{appSatore:IApp}) {
                     onNodesChange={onNodesChange}
                     onEdgesChange={onEdgesChange}
                     onConnect={onConnect}
-                    onInit={(e:any)=>setReactFlowInstance(e)}
+                    onInit={setReactFlowInstance}
                     onDrop={onDrop}
                     onDragOver={onDragOver}
                     fitView
                 >
                     <Controls className='text-white bg-white' />
-                    <MiniMap />
-                   
                 </ReactFlow>
             </div>
-        </ReactFlowProvider>
     </div>
   );
 }

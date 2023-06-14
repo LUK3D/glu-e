@@ -47,6 +47,13 @@ export interface ISelectItem{
 }
 
 
+export interface IRelation{
+  from?:Node,
+  to?:Node,
+  mode?:number
+}
+
+
 /**
  * ## IApp 🚀
  * Represents the main App Object
@@ -56,11 +63,13 @@ export interface IApp{
     tables:Array<Itable>,
     migrationsNodes:Node<{label: string;}, string | undefined>[],
     migrationsEdges:Edge<any>[],
+    relations:IRelation[],
     setMigrationNodes: Function,
-    setMigrationEdges: Function,
-
-    setWorkspace: Function,
-    createTable: Function,
-    createColumn: Function,
-    toggleTable: Function,
+    setMigrationEdges: (edges:Edge<any>[])=>void,
+    setRelations: (relations:IRelation[])=>void,
+    setWorkspace: (w:string)=>void,
+    createTable: (name:string)=>boolean|null,
+    createColumn: (table:string,column:IColumn)=>boolean|null,
+    /**Toggles the table element in outline */
+    toggleTable: (name:string)=>void,
 }

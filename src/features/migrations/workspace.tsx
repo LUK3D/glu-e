@@ -1,4 +1,5 @@
 // import { CodeBracketSquareIcon } from "@heroicons/react/24/outline";
+import { ReactFlowProvider } from "reactflow";
 import { IApp } from "../../types";
 import MigrationsCanvas from "./canvas";
 
@@ -30,8 +31,10 @@ export  function Workspace(props:{appStore:IApp}) {
             </tr>
         </tbody>
         </table> */}
-
+        <ReactFlowProvider>
         <MigrationsCanvas appSatore={props.appStore}></MigrationsCanvas>
+        </ReactFlowProvider>
+
     </div>
   )
 }

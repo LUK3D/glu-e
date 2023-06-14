@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { IApp, IColumn } from '../types'
+import { IApp, IColumn, IRelation } from '../types'
 import { Edge, Node } from 'reactflow';
 
 
@@ -61,12 +61,12 @@ export const useAppStore = create<IApp>((set, get) => ({
  ],
  migrationsEdges:[],
  migrationsNodes:[],
+ relations:[],
  setWorkspace: (w:string)=>set(()=>({workspace:w})),
- createTable: function (tableName:string){
+ createTable:  (tableName:string)=>{
     const tables = get().tables;
-    console.log(tables.filter((e)=>e.name == tableName));
     if(tables.filter((e)=>e.name == tableName).length !=0){
-        return;
+        return null;
     }
     tables.push({
         name:tableName,
@@ -83,11 +83,11 @@ export const useAppStore = create<IApp>((set, get) => ({
     set(()=>({tables:tables}));
     return true;
  },
-
- createColumn:function (table:string,column:IColumn){
+ setRelations:(relations: IRelation[])=>set(()=>({relations:relations})),
+ createColumn: (table:string,column:IColumn)=>{
     const tables = get().tables.filter((x)=>x.name == table);
     if(tables.length<=0){
-      return;
+      return null;
     }
 
     const columns = tables[0].columns;
@@ -102,7 +102,7 @@ export const useAppStore = create<IApp>((set, get) => ({
     })}));
     return true;
  },
- toggleTable: function (name:string){
+ toggleTable:  (name:string)=>{
     set(()=>({
         tables:
         get().tables.map((e)=>{
@@ -116,7 +116,6 @@ export const useAppStore = create<IApp>((set, get) => ({
 
  },
  setMigrationEdges:(edges:Edge<any>[])=>{
-    console.log(edges)
     set(()=>({migrationsEdges:edges}));
  },
  setMigrationNodes:(nodes:Node<{label: string;}, string | undefined>[])=>{

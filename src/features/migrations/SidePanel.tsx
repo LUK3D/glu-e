@@ -51,7 +51,6 @@ export  function SidePanel(args:ISidePanel) {
     }
 
     const createColumn = (column: IColumn)=>{
-        console.log(column);
 
         if(!validateTableName(columnNameInput.table) ||  !validateTableName(column.name)){
             console.error("You must provide a valid Table and Column name: ", columnNameInput);
