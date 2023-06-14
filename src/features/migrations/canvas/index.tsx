@@ -13,8 +13,10 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import TableNode from '../../../components/nodes/tableNode';
 import RelationNode from '../../../components/nodes/relationNode';
-import { IApp, IColumn, Itable } from '../../../types';
+import { IApp, IColumn, ITable } from '../../../types';
 import { validateNode } from '../../../core';
+import { consoleStore } from '../../../store';
+import generateUniqueKey from '../../../utls/generator';
 
 
 const NODE_TYPES = {
@@ -22,8 +24,7 @@ const NODE_TYPES = {
     relation:RelationNode,
 };
 
-let id = 0;
-const getId = () => `dndnode_${id++}`;
+
 
 let hadBug = false;
 
@@ -39,6 +40,8 @@ export default function Canvas(props:{appSatore:IApp}) {
     const [nodes, setNodes, onNodesChange] = useNodesState(props.appSatore.migrationsNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(props.appSatore.migrationsEdges);
 
+    const myConsole = consoleStore((state)=>state);
+
 
     const onConnect = useCallback((params:any) =>{
         setEdges((eds) => addEdge(params, eds));
@@ -51,7 +54,7 @@ export default function Canvas(props:{appSatore:IApp}) {
         props.appSatore.setMigrationNodes(nodes);
         props.appSatore.setMigrationEdges(edges);
 
-        const [result,hasBug] = validateNode({nodes:[...nodes], edges:[...edges], init:true});
+        const [result,hasBug] = validateNode({nodes:[...nodes], edges:[...edges]});
 
         if(hasBug){
           let tablesWithErros = result.map((e)=>e.from?.data['label']);
@@ -65,6 +68,12 @@ export default function Canvas(props:{appSatore:IApp}) {
             return n;
           } ))
           forceReactFlowRefresh();
+
+          result.map((e)=>e.errors).forEach(element => {
+            myConsole.log(element);
+          });
+
+          
         }else{
 
           if(hadBug){
@@ -106,7 +115,7 @@ export default function Canvas(props:{appSatore:IApp}) {
 
       const onAddNode = (props:NodeProps)=>{
         const newNode = {
-            id: getId(),
+            id: `node_${generateUniqueKey()}`,
             type:'relation',
             position:{x:(props.xPos??0)+400, y:props.yPos},
             data: { 
@@ -136,7 +145,7 @@ export default function Canvas(props:{appSatore:IApp}) {
           }
 
           const type = data.type;
-          const table:Itable = data.table;
+          const table:ITable = data.table;
           const column:IColumn = data.column;
     
           // check if the dropped element is valid
@@ -149,7 +158,7 @@ export default function Canvas(props:{appSatore:IApp}) {
             y: event.clientY - reactFlowBounds.top,
           });
           const newNode = {
-            id: getId(),
+            id: `node_${generateUniqueKey()}`,
             type,
             position,
             data: { 

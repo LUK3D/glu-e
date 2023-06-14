@@ -2,7 +2,7 @@ import { TableCellsIcon } from "@heroicons/react/20/solid";
 import { MagnifyingGlassCircleIcon, FolderIcon, } from "@heroicons/react/24/outline";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import OutlinerItem from "./components/outlinerItem";
-import { IApp, IColumn, Itable } from "../../types";
+import { IApp, IColumn, ITable } from "../../types";
 import Modal from "../../components/modal";
 import { useState } from "react";
 import { validateTableName } from "../../utls/validator";
@@ -135,7 +135,7 @@ export  function SidePanel(args:ISidePanel) {
                 {args.appStore.tables.map((table)=><OutlinerItem onAddColumnClick={()=>{
                     setColumnNameInput({...columnNameInput, table:table.name});
                     setCreatingColumn(true);
-                }} key={`table_${table.name}`} table={table} onTableClick={(t:Itable)=>args.appStore.toggleTable(t.name)}></OutlinerItem>)}
+                }} key={`table_${table.name}`} table={table} onTableClick={(t:ITable)=>args.appStore.toggleTable(t.name)}></OutlinerItem>)}
                
             </ul>
         </div>

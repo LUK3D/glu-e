@@ -1,7 +1,6 @@
 import { create } from 'zustand'
-import { IApp, IColumn, IRelation } from '../types'
+import { IApp, IColumn, IConsoleStore, IRelation, IRelationError } from '../types'
 import { Edge, Node } from 'reactflow';
-
 
 
 export const useAppStore = create<IApp>((set, get) => ({
@@ -147,3 +146,33 @@ export const useAppStore = create<IApp>((set, get) => ({
     set(()=>({migrationsNodes:nodes}));
  }
 }))
+
+
+
+export const consoleStore = create<IConsoleStore>((set, get) => ({
+    errors:[],
+    log:(errors:IRelationError[])=>{
+        let erros = get().errors;
+        let nerErrors:IRelationError[] = [];
+        
+        erros.forEach((r)=>{
+            let identics = 0;
+
+            r.highights?.forEach(element => {
+                errors.forEach((e)=>{
+                    if(e.highights?.includes(element)){
+                        identics +=1;
+                    }
+                })
+            })
+            if(identics != r.highights?.length){
+                nerErrors.push(r);
+            }
+        })
+
+
+
+        
+        set(()=>({errors:[...nerErrors,...errors]}));
+    }
+}));

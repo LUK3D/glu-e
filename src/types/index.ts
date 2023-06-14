@@ -35,7 +35,7 @@ export interface IColumn {
  * # Itable 🚀
  * Represents a table on database 
  */
-export interface Itable{
+export interface ITable{
     name:string,
     expanded?:boolean,
     /** A List of columns for this table */
@@ -50,11 +50,12 @@ export interface ISelectItem{
 
 
 export enum RelatioError{
-  dataType = 'DATA_TYPE'
+  dataType = 'DATA_TYPE',
 }
 export interface IRelationError{
   type:RelatioError,
-  message:string
+  message:string,
+  highights?:string[]
 }
 
 export interface IRelation{
@@ -65,13 +66,19 @@ export interface IRelation{
 }
 
 
+export interface IConsoleStore{
+  errors:IRelationError[],
+  log: (errors:IRelationError[])=>void
+}
+
+
 /**
  * ## IApp 🚀
  * Represents the main App Object
  */
 export interface IApp{
     workspace:string,
-    tables:Array<Itable>,
+    tables:Array<ITable>,
     migrationsNodes:Node<{label: string; column?:IColumn, invalid?:boolean}, string | undefined>[],
     migrationsEdges:Edge<any>[],
     relations:IRelation[],

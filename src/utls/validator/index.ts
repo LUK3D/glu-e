@@ -19,3 +19,23 @@ export function validateTableName(tableName: string): boolean {
   
     return isValid;
   }
+
+
+  export function areObjectsEqual(obj1: any, obj2: any): boolean {
+    // Get the keys of the objects
+    const keys = Object.keys(obj1) as Array<keyof any>;
+  
+    // Iterate over the keys and compare the corresponding values
+    for (const key of keys) {
+      const value1 = obj1[key];
+      const value2 = obj2[key];
+  
+      // Check if the values are not equal
+      if (value1 !== value2) {
+        return false;
+      }
+    }
+  
+    // All values are equal
+    return true;
+  }

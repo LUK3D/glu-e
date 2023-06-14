@@ -13,12 +13,12 @@ import { IRelation, RelatioError } from '../types';
  * @param args 
  * @returns 
  */
-export function validateNode(args:{nodes:Node[], edges:Edge[], init: boolean}):[IRelation[], boolean]{
+export function validateNode({ nodes, edges, init }: { nodes: Node[]; edges: Edge[]; init: boolean }): [IRelation[], boolean] {
     let result: IRelation[] = [];
 
     let hasBugs = false;
   
-    if(args.nodes.length<=0 || args.edges.length <=0){
+    if(nodes.length<=0 || edges.length <=0){
         return [result, hasBugs];
     }
 
@@ -26,19 +26,21 @@ export function validateNode(args:{nodes:Node[], edges:Edge[], init: boolean}):[
         errors:[]
     }
 
-    for (let i = 0; i < args.nodes.length; i++) {
-        const currentNode = args.nodes[i];
+    for (let i = 0; i < nodes.length; i++) {
+        const currentNode = nodes[i];
     
-        args.edges.forEach(source => {
+        edges.forEach(source => {
             if(currentNode.id == source.source){
-                if(currentNode.type != 'relation')
-                relation.from = currentNode;
+                if(currentNode.type != 'relation'){
+                    relation.from = currentNode;
+                }
             }
 
-            args.edges.forEach(target => {
+            edges.forEach(target => {
                 if(currentNode.id == target.target){
-                    if(currentNode.type != 'relation')
-                    relation.to = currentNode;
+                    if(currentNode.type != 'relation'){
+                        relation.to = currentNode;
+                    }
                 }
             });
 
@@ -47,7 +49,8 @@ export function validateNode(args:{nodes:Node[], edges:Edge[], init: boolean}):[
                 if(relation.from.data['column']['type'] != relation.to.data['column']['type']){
                     relation.errors.push({
                         type:RelatioError.dataType,
-                        message:`[${relation.from.data['label']}] of type [${relation.from.data['column']['type']}] Can't be related to [${relation.to.data['label']}] of type [${relation.to.data['column']['type']}]`
+                        message:`## of type ## Can't be related to ## of type ##`,
+                        highights:[`${relation.from.data['label']}`, `${relation.from.data['column']['type']}`, `${relation.to.data['label']}`, `${relation.to.data['column']['type']}`]
                     });
                     hasBugs = true;
                 }
@@ -64,7 +67,8 @@ export function validateNode(args:{nodes:Node[], edges:Edge[], init: boolean}):[
             if(relation.from.data['column']['type'] != relation.to.data['column']['type']){
                 relation.errors.push({
                     type:RelatioError.dataType,
-                    message:`[${relation.from.data['label']}] of type [${relation.from.data['column']['type']}] Can't be related to [${relation.to.data['label']}] of type [${relation.to.data['column']['type']}]`
+                    message:`## of type ## Can't be related to ## of type ##`,
+                    highights:[`${relation.from.data['label']}`, `${relation.from.data['column']['type']}`, `${relation.to.data['label']}`, `${relation.to.data['column']['type']}`]
                 });
                 hasBugs = true;
             }
@@ -76,6 +80,7 @@ export function validateNode(args:{nodes:Node[], edges:Edge[], init: boolean}):[
         }
     }
 
-    return [result, hasBugs];;
+    return [result, hasBugs];
     
 }
+
