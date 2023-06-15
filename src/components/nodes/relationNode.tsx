@@ -10,8 +10,8 @@ export default function RelationNode() {
         <PuzzlePieceIcon width={20} className="text-yellow-500"></PuzzlePieceIcon>
             <p className="ml-2 font-bold"><span className="text-yellow-500">Foreign on</span></p>
         </div>
-        <Handle id="left" type="target" position={Position.Left}  />
-        <Handle id="right" type="source" position={Position.Right}  />
+        <Handle id="left" type="target" position={Position.Left} className="w-3 h-3 -left-2 border-2 bg-white border-yellow-500" />
+        <Handle id="right" type="source" position={Position.Right} className="w-3 h-3 -right-2 border-2 bg-white border-yellow-500"  />
         
     </div>
   )

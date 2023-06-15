@@ -43,8 +43,8 @@ export default function TableNode(props:NodeProps) {
         className="absolute w-[20px] h-[20px] bg-white -right-3 rounded-md border-2 border-primary z-10 flex justify-center items-center ">
             <PlusIcon className="text-primary" strokeWidth={4}></PlusIcon>
         </button>
-        <Handle id="right" type="source" position={Position.Right}  />
-        <Handle id="left" type="target" position={Position.Left}  />
+        <Handle id="right" type="source" position={Position.Right}   />
+        <Handle id="left" type="target" position={Position.Left} className="w-3 h-3 -left-2 border-2 bg-white border-primary"  />
         
     </div>
   )

@@ -130,7 +130,7 @@ export  function SidePanel(args:ISidePanel) {
             <TableCellsIcon width={20}></TableCellsIcon>
             <h1 className="ml-2 font-bold">Tables</h1>
         </div>
-        <div className="w-full h-full overflow-y-auto bg-black-200 bg-gradient-radial bg-radial-black-transparent bg-radial-size bg-radial-position">
+        <div className="w-full h-[70vh] overflow-y-auto bg-black-200 bg-gradient-radial bg-radial-black-transparent bg-radial-size bg-radial-position">
             <ul>
                 {args.appStore.tables.map((table)=><OutlinerItem onAddColumnClick={()=>{
                     setColumnNameInput({...columnNameInput, table:table.name});

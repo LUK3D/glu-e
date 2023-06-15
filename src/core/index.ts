@@ -2,8 +2,7 @@ import {
     Node,
     Edge
   } from 'reactflow';
-import { IRelation, RelatioError } from '../types';
-
+import { IColumn, IRelation, ITable, RelatioError } from '../types';
 
 
 
@@ -84,3 +83,81 @@ export function validateNode({ nodes, edges }: { nodes: Node[]; edges: Edge[]}):
     
 }
 
+
+
+// Function 1: Prepare SQL String
+function prepareSQLString(sql: string): string {
+    // Remove comments
+    const commentRegex = /--.*$/gm;
+    sql = sql.replace(commentRegex, '');
+  
+    // Remove set statements
+    const setRegex = /\/\*![\s\S]*?\*\//gm;
+    sql = sql.replace(setRegex, '');
+  
+    return sql.trim();
+  }
+
+
+  function removeNumberInParentheses(input: string): string {
+    return input.replace(/\(\d+\)/gs, '');
+  }
+
+ 
+export function parseSQL(sql: string): ITable[] {
+    const query = prepareSQLString(sql).toLowerCase().split('if not exists').join('').split('varchar(').join('varchar (');
+
+
+
+
+    const createTableRegex = /create table\s+(\w+)\s+\(([\s\S]*?)\)[,;]?/g;
+    const columnRegex = /`?(\w+)`?\s+(\w+)(?:\((\d+)\))?(?:\s+(not null))?(\s+default\s+(.*?)(?=\s+(?:,|$)))?(?:\s+(primary key)|(unique))?/g;
+  
+    const tables: ITable[] = [];
+
+
+  
+    let match;
+    while ((match = createTableRegex.exec(removeNumberInParentheses(query))) !== null) {
+      const tableName = match[1];
+      const columnDefinitions = match[2].replace(/\n/g, '');
+  
+      const columns: IColumn[] = [];
+  
+      let columnMatch;
+      while ((columnMatch = columnRegex.exec(columnDefinitions)) !== null) {
+        const columnName = columnMatch[1];
+        const columnType = columnMatch[2];
+        const columnLength = columnMatch[3] ? parseInt(columnMatch[3], 10) : undefined;
+        const isNullable = columnMatch[4] ? false : true;
+        const defaultValue = columnMatch[6] ? columnMatch[6] : undefined;
+        const isPrimaryKey = columnMatch[7] === 'primary key';
+        const isUnique = columnMatch[7] === 'unique';
+  
+        const column: IColumn = {
+          name: columnName,
+          type: columnType,
+          length: columnLength,
+          nullable: isNullable,
+          defaultValue: defaultValue,
+          primaryKey: isPrimaryKey, // Set primaryKey property based on regex match
+          unique: isUnique,
+        };
+  
+        columns.push(column);
+      }
+  
+      const table: ITable = {
+        name: tableName,
+        columns: columns,
+      };
+  
+      tables.push(table);
+    }
+  
+    return tables;
+    }
+
+    
+  
+  

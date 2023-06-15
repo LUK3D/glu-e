@@ -55,8 +55,8 @@ export const useAppStore = create<IApp>((set, get) => ({
             },
         ],
         expanded:true
-    }
- 
+    },
+   
  ],
  migrationsEdges:[],
  migrationsNodes:[],

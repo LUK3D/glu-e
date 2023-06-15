@@ -17,6 +17,8 @@ import { IApp, IColumn, ITable } from '../../../types';
 import { validateNode } from '../../../core';
 import { consoleStore } from '../../../store';
 import generateUniqueKey from '../../../utls/generator';
+import CustomEdge from '../../../components/edges/customEdge';
+
 
 
 const NODE_TYPES = {
@@ -24,7 +26,9 @@ const NODE_TYPES = {
     relation:RelationNode,
 };
 
-
+const edgeTypes = {
+  default: CustomEdge,
+};
 
 let hadBug = false;
 
@@ -44,7 +48,7 @@ export default function Canvas(props:{appSatore:IApp}) {
 
 
     const onConnect = useCallback((params:any) =>{
-        setEdges((eds) => addEdge(params, eds));
+        setEdges((eds) => addEdge({...params},  eds));
     }, [setEdges]);
 
 
@@ -175,6 +179,9 @@ export default function Canvas(props:{appSatore:IApp}) {
         [reactFlowInstance]
       );
 
+
+   
+
       
     
 
@@ -183,6 +190,7 @@ export default function Canvas(props:{appSatore:IApp}) {
             <div className="reactflow-wrapper w-full h-full" ref={reactFlowWrapper}>
                 <ReactFlow
                     nodeTypes={NODE_TYPES}
+                    edgeTypes={edgeTypes}
                     nodes={nodes}
                     edges={edges}
                     onNodesChange={onNodesChange}
