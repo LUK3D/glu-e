@@ -1,12 +1,18 @@
 import { Configuration, OpenAIApi } from "openai";
-const configuration = new Configuration({
-    organization: "org-xZXZCHKchEwPhkIWlaWnev04",
-    apiKey: "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",
-});
-const openai = new OpenAIApi(configuration);
+let configuration:Configuration;
+let openai:OpenAIApi;
 
 
-export async function getAIModels (){
+
+export async function getAIModels ({apiKey, orgName}:{apiKey:string, orgName:string}){
+
+    if(!configuration){
+        configuration  = new Configuration({
+            organization: orgName ,
+            apiKey: apiKey,
+        });
+        openai = new OpenAIApi(configuration);
+    }
     const completion = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         messages: [{"role": "system", "content": "You are a helpful assistant."}, {role: "user", content: "Hello world"}],
