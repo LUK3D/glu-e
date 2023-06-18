@@ -11,7 +11,7 @@ interface IModel{
     description?:ReactNode|string
 }
 
-export default function Modal( {isOpen, buttonClass, body, onCloseDialog,description, tittle}: IModel ) {
+export default function Modal( {isOpen,  body, onCloseDialog,description, tittle}: IModel ) {
 
 
   return (

@@ -8,7 +8,6 @@ import ReactFlow, {
   ReactFlowInstance,
   useReactFlow,
   NodeChange,
-  Connection,
 } from 'reactflow';
 
 import 'reactflow/dist/style.css';

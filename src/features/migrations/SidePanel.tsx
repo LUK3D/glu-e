@@ -7,6 +7,7 @@ import Modal from "../../components/modal";
 import { useState } from "react";
 import { validateTableName } from "../../utls/validator";
 import NewTableForm from "./components/newTableForm";
+import { getAIModels } from "../../core/ai";
 
 
 interface ISidePanel{
@@ -126,9 +127,14 @@ export  function SidePanel({appStore}:ISidePanel) {
                 />
                 <MagnifyingGlassCircleIcon width={20}></MagnifyingGlassCircleIcon>
             </div>
-            <button onClick={()=>setCreatingTable(true)} className="px-2 py-2 bg-primary border border-primary bg-opacity-25 hover:bg-opacity-50 active:bg-opacity-60 transition-colors  text-gray-200 rounded-md mt-2 flex items-center justify-center">
-                <p className="mr-2">New Table</p> <PlusIcon width={20}></PlusIcon>
-            </button>
+            <div className="flex items-center">
+                <button onClick={()=>setCreatingTable(true)} className="px-2 py-2 bg-primary border border-primary bg-opacity-25 hover:bg-opacity-50 active:bg-opacity-60 transition-colors  text-gray-200 rounded-md mt-2 flex items-center justify-center">
+                    <p className="mr-2">New Table</p> <PlusIcon width={20}></PlusIcon>
+                </button>
+                <button onClick={()=>getAIModels()} className="px-2 py-2 ml-4 bg-primary border border-primary bg-opacity-25 hover:bg-opacity-50 active:bg-opacity-60 transition-colors  text-gray-200 rounded-md mt-2 flex items-center justify-center">
+                    <p className="mr-2">Generae</p> <PlusIcon width={20}></PlusIcon>
+                </button>
+            </div>
         </div>
         <div className="flex items-center px-4 py-2 text-lg">
             <TableCellsIcon width={20}></TableCellsIcon>
