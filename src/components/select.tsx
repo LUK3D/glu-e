@@ -5,13 +5,13 @@ import { ISelectItem } from '../types'
 
 
 
-export default function Select( args: {elements:Array<ISelectItem>, onChange:Function}) {
-  const [selected, setSelected] = useState<ISelectItem>(args.elements[0]);
+export default function Select( {elements, onChange}: {elements:Array<ISelectItem>, onChange:Function}) {
+  const [selected, setSelected] = useState<ISelectItem>(elements[0]);
 
   return (
       <Listbox value={selected} onChange={(value: ISelectItem)=>{
         setSelected(value);
-        args.onChange(value);
+        onChange(value);
       }}>
         <div className="relative mt-1">
           <Listbox.Button className="relative w-full cursor-default rounded-lg bg-transparent py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
@@ -30,7 +30,7 @@ export default function Select( args: {elements:Array<ISelectItem>, onChange:Fun
             leaveTo="opacity-0"
           >
             <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-black-400 py-1 text-base shadow-lg focus:outline-none sm:text-sm">
-              {args.elements.map((item, itemIdx) => (
+              {elements.map((item, itemIdx) => (
                 <Listbox.Option
                   key={itemIdx}
                   className={({ active }) =>

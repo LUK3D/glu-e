@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { IApp, IColumn, IConsoleStore, IRelation, IRelationError } from '../types'
-import { Edge, Node } from 'reactflow';
+import { Edge, Node, NodeProps, ReactFlowInstance, addEdge,   } from 'reactflow';
+import generateUniqueKey from '../utls/generator';
 
 
 export const useAppStore = create<IApp>((set, get) => ({
@@ -56,11 +57,16 @@ export const useAppStore = create<IApp>((set, get) => ({
         ],
         expanded:true
     },
-   
  ],
  migrationsEdges:[],
  migrationsNodes:[],
  relations:[],
+ setReactFlow:(rf:ReactFlowInstance)=>{
+    // const state = get();
+    set(()=>({reacFlow:rf}));
+    // rf.setNodes(state.migrationsNodes)
+    // rf.setEdges(state.migrationsEdges)
+ },
  setWorkspace: (w:string)=>set(()=>({workspace:w})),
  createTable:  (tableName:string)=>{
     const tables = get().tables;
@@ -106,7 +112,6 @@ export const useAppStore = create<IApp>((set, get) => ({
     });
 
     set(()=>({tables:tables}));
-    console.log(tables);
  },
  createColumn: (table:string,column:IColumn)=>{
     const tables = get().tables.filter((x)=>x.name == table);
@@ -142,9 +147,60 @@ export const useAppStore = create<IApp>((set, get) => ({
  setMigrationEdges:(edges:Edge<any>[])=>{
     set(()=>({migrationsEdges:edges}));
  },
- setMigrationNodes:(nodes:Node<{label: string; column?:IColumn}, string | undefined>[])=>{
+ setMigrationNodes:(nodes:Node<{label: string; column?:IColumn, invalid?:boolean, event:(args:any)=>void}, string | undefined>[])=>{
     set(()=>({migrationsNodes:nodes}));
+ },
+
+ onAddNode: (props:NodeProps)=>{
+
+    const state = get();
+
+    const newNode = {
+        id: `node_${generateUniqueKey()}`,
+        type:'relation',
+        position:{x:(props.xPos??0)+400, y:props.yPos},
+        data: { 
+            label: `relational node`,
+        },
+      };
+
+      state.reacFlow?.setNodes((nds)=>nds.concat(newNode));
+
+      setTimeout(() => {
+        state.reacFlow?.setEdges((eds) => addEdge({source: props.id, sourceHandle: 'right', target: newNode.id, targetHandle: 'left'}, eds));   
+      }, 100);
+
+},
+
+ loadSave:(appStorage: IApp)=>{
+    const state = get();
+
+    appStorage.migrationsNodes = appStorage.migrationsNodes.map((mn)=>{
+        mn.data.event = state.onAddNode;
+
+        return mn;
+    })
+
+
+     
+     
+     set(()=>({
+         workspace: appStorage.workspace,
+         tables: appStorage.tables,
+         migrationsEdges: appStorage.migrationsEdges,
+         migrationsNodes: appStorage.migrationsNodes,
+         relations: appStorage.relations,
+    }));
+        
+   
+    if(state.reacFlow){
+        console.log('LOADING:', state.migrationsEdges );
+        state.reacFlow.setNodes(state.migrationsNodes)
+        state.reacFlow.setEdges(state.migrationsEdges)
+    }
  }
+
+ 
 }))
 
 

@@ -36,6 +36,7 @@ export default function TableNode(props:NodeProps) {
 
         <button 
         onClick={()=>{
+            console.log(props.data);
             if(props.data.event){
                 props.data.event(props);
             }

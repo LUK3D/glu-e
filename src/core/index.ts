@@ -44,8 +44,29 @@ export function validateNode({ nodes, edges }: { nodes: Node[]; edges: Edge[]}):
             });
 
             if(relation.from && relation.to){
+                if(relation.to.type != 'relation' && relation.from.type!= 'relation' ){
+                    if(relation.from.data['column']['type']?.toString().toLowerCase() != relation.to.data['column']['type']?.toString().toLowerCase()){
+                        relation.errors.push({
+                            type:RelatioError.dataType,
+                            message:`## of type ## Can't be related to ## of type ##`,
+                            highights:[`${relation.from.data['label']}`, `${relation.from.data['column']['type']}`, `${relation.to.data['label']}`, `${relation.to.data['column']['type']}`]
+                        });
+                        hasBugs = true;
+                    }
 
-                if(relation.from.data['column']['type'] != relation.to.data['column']['type']){
+                    result.push(relation);
+                    relation = {
+                        errors:[]
+                    };
+                }
+            }
+            
+        });
+
+        if(relation.from && relation.to){
+            if(relation.to.type != 'relation' && relation.from.type!= 'relation' ){
+
+                if(relation.from.data['column']['type']?.toString().toLowerCase() != relation.to.data['column']['type']?.toString().toLowerCase()){
                     relation.errors.push({
                         type:RelatioError.dataType,
                         message:`## of type ## Can't be related to ## of type ##`,
@@ -59,23 +80,6 @@ export function validateNode({ nodes, edges }: { nodes: Node[]; edges: Edge[]}):
                     errors:[]
                 };
             }
-            
-        });
-
-        if(relation.from && relation.to){
-            if(relation.from.data['column']['type'] != relation.to.data['column']['type']){
-                relation.errors.push({
-                    type:RelatioError.dataType,
-                    message:`## of type ## Can't be related to ## of type ##`,
-                    highights:[`${relation.from.data['label']}`, `${relation.from.data['column']['type']}`, `${relation.to.data['label']}`, `${relation.to.data['column']['type']}`]
-                });
-                hasBugs = true;
-            }
-
-            result.push(relation);
-            relation = {
-                errors:[]
-            };
         }
     }
 

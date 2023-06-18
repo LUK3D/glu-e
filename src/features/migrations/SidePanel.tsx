@@ -17,7 +17,7 @@ interface IColumnComposition{
     table:string,
     column:string
 }
-export  function SidePanel(args:ISidePanel) {
+export  function SidePanel({appStore}:ISidePanel) {
 
     const [creatingTable, setCreatingTable] = useState<boolean>(false);
     const [tableNameInput, setTableNameInput] = useState<string>('');
@@ -37,7 +37,7 @@ export  function SidePanel(args:ISidePanel) {
             console.error("You must provide a valid name for this table: ", tableNameInput);
             return;
         }
-        const result = args.appStore.createTable(tableNameInput);
+        const result = appStore.createTable(tableNameInput);
 
         if(!result){
             return;
@@ -58,7 +58,7 @@ export  function SidePanel(args:ISidePanel) {
         }
 
 
-        const result = args.appStore.createColumn(columnNameInput.table, column);
+        const result = appStore.createColumn(columnNameInput.table, column);
 
         if(!result){
             return;
@@ -132,10 +132,10 @@ export  function SidePanel(args:ISidePanel) {
         </div>
         <div className="w-full h-[70vh] overflow-y-auto bg-black-200 bg-gradient-radial bg-radial-black-transparent bg-radial-size bg-radial-position">
             <ul>
-                {args.appStore.tables.map((table)=><OutlinerItem onAddColumnClick={()=>{
+                {appStore.tables.map((table)=><OutlinerItem onAddColumnClick={()=>{
                     setColumnNameInput({...columnNameInput, table:table.name});
                     setCreatingColumn(true);
-                }} key={`table_${table.name}`} table={table} onTableClick={(t:ITable)=>args.appStore.toggleTable(t.name)}></OutlinerItem>)}
+                }} key={`table_${table.name}`} table={table} onTableClick={(t:ITable)=>appStore.toggleTable(t.name)}></OutlinerItem>)}
                
             </ul>
         </div>

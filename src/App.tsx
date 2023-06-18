@@ -1,4 +1,4 @@
-import { Squares2X2Icon, ArrowPathIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { Squares2X2Icon, ArrowPathIcon, ExclamationTriangleIcon, CloudArrowUpIcon, ArrowPathRoundedSquareIcon } from '@heroicons/react/24/outline'
 import 'reactflow/dist/style.css';
 import './App.css'
 import { ReactNode} from 'react'
@@ -7,8 +7,8 @@ import { consoleStore, useAppStore } from './store';
 import { ModelSidePanel, ModelWorkspace } from './features/models';
 import Console from './features/console/Console';
 import generateUniqueKey from './utls/generator';
-
-
+import { useLocalStorage } from 'react-use';
+import { IApp } from './types';
 
 interface ITab{
   label:string,
@@ -51,11 +51,36 @@ function App() {
     // },
   ];
 
+  
+  const [savedValue, setValue] = useLocalStorage('glue-e', JSON.stringify(appStore));
+
+
+  const saveProject = ()=>{
+    setValue(JSON.stringify(appStore));
+  }
+
+  const loadProject = ()=>{
+    if(!savedValue){
+      return;
+    }
+      const val = JSON.parse(savedValue) as IApp;
+
+      
+      appStore.loadSave(val);
+  }
+
   return (
    <div className='w-screen h-screen bg-black-200 flex flex-col text-gray-500'>
     <div className='w-full h-full flex '>
       <div className='w-1/4 h-full border-black-400 border-r bg-black-300 '>
-        <div className='w-full min-h-[40px] max-h-[40px] bg-black-400'>
+        <div className='w-full min-h-[40px] max-h-[40px] bg-black-400 flex items-center'>
+            <p className='text-white font-bold px-2'>Glu-e</p>
+            <button onClick={saveProject} className='border-primary border bg-primary bg-opacity-25 text-white px-2 rounded-md mx-3' title='Save'>
+              <CloudArrowUpIcon className='w-6 h-6'></CloudArrowUpIcon>
+            </button>
+            <button onClick={loadProject} className='border-orange-500 border bg-orange-500 bg-opacity-25 text-white px-2 rounded-md mx-3' title='Load from disk'>
+              <ArrowPathRoundedSquareIcon className='w-6 h-6'></ArrowPathRoundedSquareIcon>
+            </button>
         </div>
         <div className='tree-view flex flex-col w-full h-full'>
           {tabs.map((tab)=>(tab.label == appStore.workspace && <tab.sidePannel appStore={appStore} key={`sidepanel_${generateUniqueKey()}`}></tab.sidePannel>))}

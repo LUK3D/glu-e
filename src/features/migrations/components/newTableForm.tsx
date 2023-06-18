@@ -4,7 +4,7 @@ import { DataTypesItems,DataTypes } from "../../../store/constants";
 import {  DocumentTextIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { IColumn, ISelectItem } from "../../../types";
 
-export default function NewTableForm(args:{onComplete:Function,  onCancel:Function}) {
+export default function NewTableForm({onCancel,onComplete}:{onComplete:Function,  onCancel:Function}) {
     const [columnItem, setColumnItem] = useState<IColumn>({
         name:'',
         type:DataTypes.VARCHAR,
@@ -22,11 +22,11 @@ export default function NewTableForm(args:{onComplete:Function,  onCancel:Functi
                         setColumnItem({...columnItem, name: e.currentTarget.value});
                     }}
                     onSubmit={()=>{
-                        args.onComplete(columnItem);
+                        onComplete(columnItem);
                     }}
                     onKeyDown={(e)=>{
                         if(e.code == 'Enter'){
-                            args.onComplete(columnItem);
+                            onComplete(columnItem);
                         }
                     }}
                 />
@@ -53,11 +53,11 @@ export default function NewTableForm(args:{onComplete:Function,  onCancel:Functi
                         setColumnItem({...columnItem, length: parseInt(e.currentTarget.value?.toString()??'255')});
                     }}
                     onSubmit={()=>{
-                        args.onComplete(columnItem);
+                        onComplete(columnItem);
                     }}
                     onKeyDown={(e)=>{
                         if(e.code == 'Enter'){
-                            args.onComplete(columnItem);
+                            onComplete(columnItem);
                         }
                     }}
                 />
@@ -89,11 +89,11 @@ export default function NewTableForm(args:{onComplete:Function,  onCancel:Functi
                         setColumnItem({...columnItem, defaultValue: e.currentTarget.value});
                     }}
                     onSubmit={()=>{
-                        args.onComplete(columnItem);
+                        onComplete(columnItem);
                     }}
                     onKeyDown={(e)=>{
                         if(e.code == 'Enter'){
-                            args.onComplete(columnItem);
+                            onComplete(columnItem);
                         }
                     }}
                 />
@@ -135,10 +135,10 @@ export default function NewTableForm(args:{onComplete:Function,  onCancel:Functi
             </button>
 
            <div className="flex justify-end mt-10">
-                <button onClick={()=>args.onCancel()}  className="px-4 py-1 mr-4 bg-black-200 border border-black-200 bg-opacity-50 hover:bg-opacity-60 active:bg-opacity-70 transition-colors  text-gray-500 rounded-md mt-2 flex items-center justify-center">
+                <button onClick={()=>onCancel()}  className="px-4 py-1 mr-4 bg-black-200 border border-black-200 bg-opacity-50 hover:bg-opacity-60 active:bg-opacity-70 transition-colors  text-gray-500 rounded-md mt-2 flex items-center justify-center">
                     <p >Cancel</p>
                 </button>
-                <button onClick={()=>args.onComplete(columnItem)}  className="px-4 py-1 bg-primary border border-primary bg-opacity-50 hover:bg-opacity-60 active:bg-opacity-70 transition-colors  text-gray-200 rounded-md mt-2 flex items-center justify-center">
+                <button onClick={()=>onComplete(columnItem)}  className="px-4 py-1 bg-primary border border-primary bg-opacity-50 hover:bg-opacity-60 active:bg-opacity-70 transition-colors  text-gray-200 rounded-md mt-2 flex items-center justify-center">
                     <p >Save</p> 
                 </button>
            </div>

@@ -15,7 +15,7 @@ export default function Console({myConsole}:{myConsole:IConsoleStore}) {
        }
 
        for (let i = 0; i < erros.length; i++) {
-        result.push(<><span>{erros[i]}</span> <span className='bg-black-100 italic font-bold bg-opacity-25 mx-1 px-2 rounded-md'>{error.highights[i]}</span></>)
+        result.push(<div key={generateUniqueKey()}><span >{erros[i]}</span> <span className='bg-black-100 italic font-bold bg-opacity-25 mx-1 px-2 rounded-md'>{error.highights[i]}</span></div>)
        }
 
        return result;

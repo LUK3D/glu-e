@@ -11,14 +11,14 @@ interface IModel{
     description?:ReactNode|string
 }
 
-export default function Modal( args: IModel ) {
+export default function Modal( {isOpen, buttonClass, body, onCloseDialog,description, tittle}: IModel ) {
 
 
   return (
     <>
     
-      <Transition appear show={args.isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={()=>args.onCloseDialog()}>
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={()=>onCloseDialog()}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -47,13 +47,13 @@ export default function Modal( args: IModel ) {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-200"
                   >
-                    {args.tittle}
+                    {tittle}
                   </Dialog.Title>
                   <div className="mt-2 flex flex-col">
                     <p className="text-sm text-gray-500">
-                     {args.description}
+                     {description}
                     </p>
-                    {args.body}
+                    {body}
                   </div>
 
                 </Dialog.Panel>

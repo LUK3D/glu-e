@@ -3,7 +3,7 @@ import { ReactFlowProvider } from "reactflow";
 import { IApp } from "../../types";
 import MigrationsCanvas from "./canvas";
 
-export  function Workspace(props:{appStore:IApp}) {
+export  function Workspace({appStore}:{appStore:IApp}) {
   return (
     <div className="w-full h-full overflow-y-auto flex flex-col ">
         {/* <table className="w-full">
@@ -32,7 +32,7 @@ export  function Workspace(props:{appStore:IApp}) {
         </tbody>
         </table> */}
         <ReactFlowProvider>
-        <MigrationsCanvas appSatore={props.appStore}></MigrationsCanvas>
+        <MigrationsCanvas appSatore={appStore}></MigrationsCanvas>
         </ReactFlowProvider>
 
     </div>

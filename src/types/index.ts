@@ -2,7 +2,9 @@
 import {
 
     Edge,
-    Node
+    Node,
+    NodeProps,
+    ReactFlowInstance,
   } from 'reactflow';
 /**
  * ## IColumn 🚀
@@ -79,10 +81,12 @@ export interface IConsoleStore{
 export interface IApp{
     workspace:string,
     tables:Array<ITable>,
-    migrationsNodes:Node<{label: string; column?:IColumn, invalid?:boolean}, string | undefined>[],
+    migrationsNodes:Node<{label: string; column?:IColumn, invalid?:boolean, event:(args:any)=>void}, string | undefined>[],
     migrationsEdges:Edge<any>[],
     relations:IRelation[],
     setMigrationNodes: Function,
+    reacFlow?:ReactFlowInstance,
+    setReactFlow:(rf:ReactFlowInstance)=>void;
     setMigrationEdges: (edges:Edge<any>[])=>void,
     setRelations: (relations:IRelation[])=>void,
     setWorkspace: (w:string)=>void,
@@ -91,4 +95,6 @@ export interface IApp{
     /**Toggles the table element in outline */
     toggleTable: (name:string)=>void,
     updateForeigns: ()=>void,
+    onAddNode:(props:NodeProps)=>void,
+    loadSave:(appStorage: IApp)=>void,
 }

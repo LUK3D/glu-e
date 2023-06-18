@@ -5,9 +5,9 @@ import ReactFlow, {
   useEdgesState,
   addEdge,
   ReactFlowRefType,
-  NodeProps,
   ReactFlowInstance,
   useReactFlow,
+  NodeChange,
 } from 'reactflow';
 
 import 'reactflow/dist/style.css';
@@ -33,7 +33,7 @@ const edgeTypes = {
 let hadBug = false;
 
 
-export default function Canvas(props:{appSatore:IApp}) {
+export default function Canvas({appSatore}:{appSatore:IApp}) {
 
     const reactFlowWrapper = useRef<ReactFlowRefType>(null);
     const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance|null>(null);
@@ -41,8 +41,8 @@ export default function Canvas(props:{appSatore:IApp}) {
     const reactFlowInstance2 = useReactFlow();
 
 
-    const [nodes, setNodes, onNodesChange] = useNodesState(props.appSatore.migrationsNodes);
-    const [edges, setEdges, onEdgesChange] = useEdgesState(props.appSatore.migrationsEdges);
+    const [nodes, setNodes, onNodesChange] = useNodesState([]);
+    const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
     const myConsole = consoleStore((state)=>state);
 
@@ -52,25 +52,40 @@ export default function Canvas(props:{appSatore:IApp}) {
     }, [setEdges]);
 
 
+    useEffect(()=>{
 
-  
-    useEffect(() => {
-        props.appSatore.setMigrationNodes(nodes);
-        props.appSatore.setMigrationEdges(edges);
+      appSatore.migrationsNodes.map((node)=>{
+        node.data.label
+      })
 
-        const [result,hasBug] = validateNode({nodes:[...nodes], edges:[...edges]});
+      setNodes(appSatore.migrationsNodes);
+      setEdges(appSatore.migrationsEdges);
+
+    },[]);
+
+
+
+    const updateStore = ()=>{
+        appSatore.setMigrationNodes(nodes);
+        appSatore.setMigrationEdges(edges);
+    }
+
+    const nodeValidation = ()=>{
+      const [result,hasBug] = validateNode({nodes:[...nodes], edges:[...edges]});
 
         if(hasBug){
           let tablesWithErros = result.map((e)=>e.from?.data['label']);
           hadBug = true;
-         setNodes( nodes.map((n)=>{
+          setNodes( nodes.map((n)=>{
             if(tablesWithErros.includes(n.data.label)){
+              console.log(n.data.label, tablesWithErros)
               n.data.invalid = true;
             }else{
               n.data.invalid = false;
             }
             return n;
-          } ))
+          } ));
+
           forceReactFlowRefresh();
 
           result.map((e)=>e.errors).forEach(element => {
@@ -90,13 +105,15 @@ export default function Canvas(props:{appSatore:IApp}) {
           }
           
         }
-
               
-        props.appSatore.setRelations(result);
+        appSatore.setRelations(result);
         if(result.length>0){
-          props.appSatore.updateForeigns();
+          appSatore.updateForeigns();
         }
-        console.log('RESULT:',result); // This is
+    }
+  
+    useEffect(() => {
+      nodeValidation();
     }, [edges]);
 
 
@@ -107,83 +124,55 @@ export default function Canvas(props:{appSatore:IApp}) {
       }, 1); 
     }
 
-
-
     const onDragOver = useCallback((event:any) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'move';
       }, []);
 
 
+    const onDrop = useCallback((event:any) => {
+        event.preventDefault();
 
+      //@ts-ignore
+        const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+        let data;
 
-      const onAddNode = (props:NodeProps)=>{
-        const newNode = {
-            id: `node_${generateUniqueKey()}`,
-            type:'relation',
-            position:{x:(props.xPos??0)+400, y:props.yPos},
-            data: { 
-                label: `relational node`,
-            },
-          };
+        try {
+          data = JSON.parse(event.dataTransfer.getData('application/reactflow'));
+        } catch (error) {
+          return;
+        }
 
-        setNodes((nds) => nds.concat(newNode));
-        setTimeout(() => {
-            setEdges((eds) => addEdge({source: props.id, sourceHandle: 'right', target: newNode.id, targetHandle: 'left'}, eds));   
-        }, 100);
-        
-      }
-
-
-      const onDrop = useCallback((event:any) => {
-          event.preventDefault();
-
-        //@ts-ignore
-          const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-          let data;
-
-          try {
-            data = JSON.parse(event.dataTransfer.getData('application/reactflow'));
-          } catch (error) {
-            return;
-          }
-
-          const type = data.type;
-          const table:ITable = data.table;
-          const column:IColumn = data.column;
-    
-          // check if the dropped element is valid
-          if (typeof type === 'undefined' || !type) {
-            return;
-          }
-        
-          const position = reactFlowInstance!.project({
-            x: event.clientX - reactFlowBounds.left,
-            y: event.clientY - reactFlowBounds.top,
-          });
-          const newNode = {
-            id: `node_${generateUniqueKey()}`,
-            type,
-            position,
-            data: { 
-                label: `${table.name}.${column.name}`,
-                column:column,
-                event:onAddNode
-            },
-          };
-
-          console.log(newNode)
-    
-          setNodes((nds) => nds.concat(newNode));
-        },
-        [reactFlowInstance]
-      );
-
-
-   
-
+        const type = data.type;
+        const table:ITable = data.table;
+        const column:IColumn = data.column;
+  
+        // check if the dropped element is valid
+        if (typeof type === 'undefined' || !type) {
+          return;
+        }
       
-    
+        const position = reactFlowInstance!.project({
+          x: event.clientX - reactFlowBounds.left,
+          y: event.clientY - reactFlowBounds.top,
+        });
+        const newNode = {
+          id: `node_${generateUniqueKey()}`,
+          type,
+          position,
+          data: { 
+              label: `${table.name}.${column.name}`,
+              column:column,
+              event:appSatore.onAddNode
+          },
+        };
+
+  
+        setNodes((nds) => nds.concat(newNode));
+      },
+      [reactFlowInstance]
+    );
+
 
   return (
     <div className='w-full h-full'>
@@ -193,10 +182,19 @@ export default function Canvas(props:{appSatore:IApp}) {
                     edgeTypes={edgeTypes}
                     nodes={nodes}
                     edges={edges}
-                    onNodesChange={onNodesChange}
+                    onNodesChange={(changes: NodeChange[])=>{
+                      onNodesChange(changes);
+                    }}
+
+                    onNodeDragStop={()=>{
+                      updateStore();
+                    }}
                     onEdgesChange={onEdgesChange}
                     onConnect={onConnect}
-                    onInit={setReactFlowInstance}
+                    onInit={(value: React.SetStateAction<ReactFlowInstance | null>)=>{
+                      setReactFlowInstance(value);
+                      appSatore.setReactFlow(reactFlowInstance2);
+                    }}
                     onDrop={onDrop}
                     onDragOver={onDragOver}
                     fitView
