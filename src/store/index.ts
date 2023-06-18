@@ -2,62 +2,52 @@ import { create } from 'zustand'
 import { IApp, IColumn, IConsoleStore, IRelation, IRelationError } from '../types'
 import { Edge, Node, NodeProps, ReactFlowInstance, addEdge,   } from 'reactflow';
 import generateUniqueKey from '../utls/generator';
+import { parseSQL } from '../core';
 
 
 export const useAppStore = create<IApp>((set, get) => ({
  workspace:'Migrations',
- tables:[
-    {
-        name:"User",
-        columns:[
-            {
-                name:"id",
-                type:'BigInt',
-                length:20,
-                primaryKey:true,
-                autoIncrement: true
-            },
-            {
-                name:"name",
-                type:'Varchar',
-                length:255,
-            },
-            {
-                name:"email",
-                type:'Varchar',
-                length:255,
-                nullable:true
-            },
-            {
-                name:"email_verified_at",
-                type:'Timestamp',
-                nullable:true,
-            },
-            {
-                name:"password",
-                type:'Varchar',
-                length:255,
-            },
-            {
-                name:"remember_token",
-                type:'Varchar',
-                length:100,
-                nullable:true
-            },
-            {
-                name:"created_at",
-                type:'Timestamp',
-                nullable:true,
-            },
-            {
-                name:"updated_at",
-                type:'Timestamp',
-                nullable:true,
-            },
-        ],
-        expanded:true
-    },
- ],
+ tables:parseSQL(`
+    CREATE TABLE users (
+        user_id INT PRIMARY KEY,
+        username VARCHAR(50) NOT NULL,
+        email VARCHAR(100) NOT NULL,
+        password VARCHAR(100) NOT NULL
+      );
+      
+      CREATE TABLE posts (
+        post_id INT PRIMARY KEY,
+        title VARCHAR(100) NOT NULL,
+        content TEXT NOT NULL,
+        user_id INT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+      );
+      
+      CREATE TABLE comments (
+        comment_id INT PRIMARY KEY,
+        post_id INT,
+        user_id INT,
+        content TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (post_id) REFERENCES posts(post_id),
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+      );
+      
+      CREATE TABLE categories (
+        category_id INT PRIMARY KEY,
+        name VARCHAR(50) NOT NULL
+      );
+      
+      CREATE TABLE post_category (
+        post_id INT,
+        category_id INT,
+        PRIMARY KEY (post_id, category_id),
+        FOREIGN KEY (post_id) REFERENCES posts(post_id),
+        FOREIGN KEY (category_id) REFERENCES categories(category_id)
+      );
+      
+    `),
  migrationsEdges:[],
  migrationsNodes:[],
  relations:[],

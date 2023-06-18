@@ -8,6 +8,7 @@ import ReactFlow, {
   ReactFlowInstance,
   useReactFlow,
   NodeChange,
+  Connection,
 } from 'reactflow';
 
 import 'reactflow/dist/style.css';
@@ -117,6 +118,7 @@ export default function Canvas({appSatore}:{appSatore:IApp}) {
     }, [edges]);
 
 
+
     const forceReactFlowRefresh = ()=>{
       reactFlowInstance2.setNodes([]);
       setTimeout(() => {
@@ -185,7 +187,6 @@ export default function Canvas({appSatore}:{appSatore:IApp}) {
                     onNodesChange={(changes: NodeChange[])=>{
                       onNodesChange(changes);
                     }}
-
                     onNodeDragStop={()=>{
                       updateStore();
                     }}

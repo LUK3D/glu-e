@@ -25,6 +25,9 @@ export  function SidePanel({appStore}:ISidePanel) {
     const [columnNameInput, setColumnNameInput] = useState<IColumnComposition>({table:'', column:''});
 
 
+    const [seachingWord, setSearchingWord] = useState<string>("");
+
+
 
 
     const cancelTableCreation = ()=>{
@@ -116,6 +119,7 @@ export  function SidePanel({appStore}:ISidePanel) {
         <div className="w-full   p-5   flex flex-col">
             <div className="w-full  flex items-center bg-black-100 bg-opacity-25 rounded-md px-2">
                 <input 
+                    onChange={(e)=>setSearchingWord(e.target.value)}
                     type="text" 
                     placeholder="Search here" 
                     className=" py-1 bg-transparent outline-none w-full placeholder:text-gray-600 "
@@ -132,10 +136,17 @@ export  function SidePanel({appStore}:ISidePanel) {
         </div>
         <div className="w-full h-[70vh] overflow-y-auto bg-black-200 bg-gradient-radial bg-radial-black-transparent bg-radial-size bg-radial-position">
             <ul>
-                {appStore.tables.map((table)=><OutlinerItem onAddColumnClick={()=>{
-                    setColumnNameInput({...columnNameInput, table:table.name});
-                    setCreatingColumn(true);
-                }} key={`table_${table.name}`} table={table} onTableClick={(t:ITable)=>appStore.toggleTable(t.name)}></OutlinerItem>)}
+                {appStore.tables.map((table)=>
+                <OutlinerItem 
+                    onAddColumnClick={()=>{
+                        setColumnNameInput({...columnNameInput, table:table.name});
+                        setCreatingColumn(true);
+                    }} 
+                    searchingWord={seachingWord}
+                    key={`table_${table.name}`} 
+                    table={table} 
+                    onTableClick={(t:ITable)=>appStore.toggleTable(t.name)}
+                ></OutlinerItem>)}
                
             </ul>
         </div>
