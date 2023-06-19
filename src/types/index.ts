@@ -51,11 +51,14 @@ export interface ISelectItem{
 }
 
 
-export enum RelatioError{
-  dataType = 'DATA_TYPE',
+export enum ConsoleLogTypes{
+  error = 'ERROR',
+  message = 'MESSAGE',
+  warning = 'WARN',
+  success = 'SUCCESS',
 }
-export interface IRelationError{
-  type:RelatioError,
+export interface ICosoleMessage{
+  type:ConsoleLogTypes,
   message:string,
   highights?:string[]
 }
@@ -64,13 +67,13 @@ export interface IRelation{
   from?:Node,
   to?:Node,
   mode?:number,
-  errors:IRelationError[]
+  errors:ICosoleMessage[]
 }
 
 
 export interface IConsoleStore{
-  errors:IRelationError[],
-  log: (errors:IRelationError[])=>void
+  errors:ICosoleMessage[],
+  log: (errors:ICosoleMessage[])=>void
 }
 
 

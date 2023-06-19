@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { IApp, IColumn, IConsoleStore, IRelation, IRelationError, ITable } from '../types'
+import { IApp, IColumn, IConsoleStore, IRelation, ICosoleMessage, ITable } from '../types'
 import { Edge, Node, NodeProps, ReactFlowInstance, addEdge,   } from 'reactflow';
 import generateUniqueKey from '../utls/generator';
 // import { parseSQL } from '../core';
@@ -175,9 +175,9 @@ export const useAppStore = create<IApp>((set, get) => ({
 
 export const consoleStore = create<IConsoleStore>((set, get) => ({
     errors:[],
-    log:(errors:IRelationError[])=>{
+    log:(errors:ICosoleMessage[])=>{
         let erros = get().errors;
-        let nerErrors:IRelationError[] = [];
+        let nerErrors:ICosoleMessage[] = [];
         
         erros.forEach((r)=>{
             let identics = 0;

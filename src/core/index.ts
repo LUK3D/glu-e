@@ -2,7 +2,7 @@ import {
     Node,
     Edge
   } from 'reactflow';
-import { IColumn, IRelation, ITable, RelatioError } from '../types';
+import { IColumn, IRelation, ITable, ConsoleLogTypes } from '../types';
 
 
 
@@ -47,7 +47,7 @@ export function validateNode({ nodes, edges }: { nodes: Node[]; edges: Edge[]}):
                 if(relation.to.type != 'relation' && relation.from.type!= 'relation' ){
                     if(relation.from.data['column']['type']?.toString().toLowerCase() != relation.to.data['column']['type']?.toString().toLowerCase()){
                         relation.errors.push({
-                            type:RelatioError.dataType,
+                            type:ConsoleLogTypes.error,
                             message:`## of type ## Can't be related to ## of type ##`,
                             highights:[`${relation.from.data['label']}`, `${relation.from.data['column']['type']}`, `${relation.to.data['label']}`, `${relation.to.data['column']['type']}`]
                         });
@@ -68,7 +68,7 @@ export function validateNode({ nodes, edges }: { nodes: Node[]; edges: Edge[]}):
 
                 if(relation.from.data['column']['type']?.toString().toLowerCase() != relation.to.data['column']['type']?.toString().toLowerCase()){
                     relation.errors.push({
-                        type:RelatioError.dataType,
+                        type:ConsoleLogTypes.error,
                         message:`## of type ## Can't be related to ## of type ##`,
                         highights:[`${relation.from.data['label']}`, `${relation.from.data['column']['type']}`, `${relation.to.data['label']}`, `${relation.to.data['column']['type']}`]
                     });

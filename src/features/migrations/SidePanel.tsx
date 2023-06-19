@@ -2,7 +2,7 @@ import { TableCellsIcon } from "@heroicons/react/20/solid";
 import { MagnifyingGlassCircleIcon, FolderIcon, } from "@heroicons/react/24/outline";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import OutlinerItem from "./components/outlinerItem";
-import { IApp, IColumn, ITable } from "../../types";
+import { ConsoleLogTypes, IApp, IColumn, ITable } from "../../types";
 import Modal from "../../components/modal";
 import { useState } from "react";
 import { validateTableName } from "../../utls/validator";
@@ -10,6 +10,7 @@ import NewTableForm from "./components/newTableForm";
 import { getAIModels } from "../../core/ai";
 import OpenAiIcon from "../../components/openAiIcon";
 import AiDialog from "./components/AIDialog";
+import { consoleStore } from "../../store";
 
 
 interface ISidePanel{
@@ -22,6 +23,7 @@ interface IColumnComposition{
 }
 export  function SidePanel({appStore}:ISidePanel) {
 
+    const myConsole = consoleStore((state)=>state);
     const [creatingTable, setCreatingTable] = useState<boolean>(false);
     const [tableNameInput, setTableNameInput] = useState<string>('');
     const [creatingColumn, setCreatingColumn] = useState<boolean>(false);
@@ -33,12 +35,39 @@ export  function SidePanel({appStore}:ISidePanel) {
 
 
     const onGenerateWithAi = async (organization:string,apiKey:string, description:string)=>{
-        console.log(organization,apiKey, description);
+
+        if(description.trim().length==0){
+            myConsole.log([
+                {
+                    type: ConsoleLogTypes.error,
+                    message:"You need to inform some ##",
+                    highights:["Description"]
+                }
+            ]);
+
+            return;
+        }
+        
+        myConsole.log([
+            {
+                type: ConsoleLogTypes.message,
+                message:"Generating Tables for ##",
+                highights:[
+                    description.substring(0,(description.length<100)?description.length:100)
+                ]
+            }
+        ]);
         appStore.setAiCredencials({org:organization, key:apiKey});
         if(appStore.openAi){
            const tables = await getAIModels({key:apiKey, org:organization, description});
             appStore.setTables(tables);
-           console.log(tables);
+            myConsole.log([
+                {
+                    type: ConsoleLogTypes.success,
+                    message:"Done! ## Generated",
+                    highights:["Tables"]
+                }
+            ]);
         }
     }
 
