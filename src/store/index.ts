@@ -1,61 +1,28 @@
 import { create } from 'zustand'
-import { IApp, IColumn, IConsoleStore, IRelation, IRelationError } from '../types'
+import { IApp, IColumn, IConsoleStore, IRelation, IRelationError, ITable } from '../types'
 import { Edge, Node, NodeProps, ReactFlowInstance, addEdge,   } from 'reactflow';
 import generateUniqueKey from '../utls/generator';
-import { parseSQL } from '../core';
+// import { parseSQL } from '../core';
 
 
 export const useAppStore = create<IApp>((set, get) => ({
  workspace:'Migrations',
- tables:parseSQL(`
-    CREATE TABLE users (
-        user_id INT PRIMARY KEY,
-        username VARCHAR(50) NOT NULL,
-        email VARCHAR(100) NOT NULL,
-        password VARCHAR(100) NOT NULL
-      );
-      
-      CREATE TABLE posts (
-        post_id INT PRIMARY KEY,
-        title VARCHAR(100) NOT NULL,
-        content TEXT NOT NULL,
-        user_id INT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(user_id)
-      );
-      
-      CREATE TABLE comments (
-        comment_id INT PRIMARY KEY,
-        post_id INT,
-        user_id INT,
-        content TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (post_id) REFERENCES posts(post_id),
-        FOREIGN KEY (user_id) REFERENCES users(user_id)
-      );
-      
-      CREATE TABLE categories (
-        category_id INT PRIMARY KEY,
-        name VARCHAR(50) NOT NULL
-      );
-      
-      CREATE TABLE post_category (
-        post_id INT,
-        category_id INT,
-        PRIMARY KEY (post_id, category_id),
-        FOREIGN KEY (post_id) REFERENCES posts(post_id),
-        FOREIGN KEY (category_id) REFERENCES categories(category_id)
-      );
-      
-    `),
+ tables:[],
  migrationsEdges:[],
  migrationsNodes:[],
  relations:[],
+ openAi:{
+    org:'',
+    key:''
+ },
  setReactFlow:(rf:ReactFlowInstance)=>{
     // const state = get();
     set(()=>({reacFlow:rf}));
     // rf.setNodes(state.migrationsNodes)
     // rf.setEdges(state.migrationsEdges)
+ },
+ setTables:(tables: ITable[])=>{
+    set(()=>({tables:tables}));
  },
  setWorkspace: (w:string)=>set(()=>({workspace:w})),
  createTable:  (tableName:string)=>{
@@ -188,6 +155,17 @@ export const useAppStore = create<IApp>((set, get) => ({
         state.reacFlow.setNodes(state.migrationsNodes)
         state.reacFlow.setEdges(state.migrationsEdges)
     }
+ },
+ setAiCredencials: (openAi:{org:string, key:string})=>{
+        set(()=>({openAi:openAi}));
+ },
+ expandAllTables: ()=>{
+    set((state)=>({
+        tables:state.tables.map((t)=>{
+            t.expanded = true;
+            return t;
+        })
+    }))
  }
 
  

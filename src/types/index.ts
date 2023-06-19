@@ -86,7 +86,9 @@ export interface IApp{
     relations:IRelation[],
     setMigrationNodes: Function,
     reacFlow?:ReactFlowInstance,
+    openAi?:{org:string, key:string},
     setReactFlow:(rf:ReactFlowInstance)=>void;
+    setTables: (tables:ITable[])=>void,
     setMigrationEdges: (edges:Edge<any>[])=>void,
     setRelations: (relations:IRelation[])=>void,
     setWorkspace: (w:string)=>void,
@@ -97,4 +99,6 @@ export interface IApp{
     updateForeigns: ()=>void,
     onAddNode:(props:NodeProps)=>void,
     loadSave:(appStorage: IApp)=>void,
+    expandAllTables: ()=>void,
+    setAiCredencials: ({org, key}:{org:string, key:string})=>void,
 }

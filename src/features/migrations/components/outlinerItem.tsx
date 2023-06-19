@@ -27,7 +27,7 @@ export default function OutlinerItem({onAddColumnClick, onTableClick, table, sea
                 <ChevronDownIcon width={15}></ChevronDownIcon>
             </div>
         </div>
-        <ul className={`pl-4 ${table.expanded == true?' flex flex-col':'hidden'}`}>
+        <ul className={`pl-4 ${(table.expanded || searchingWord.trim().length>0) == true?' flex flex-col':'hidden'}`}>
             {table.columns.map((column)=>(
                column.name.includes(searchingWord)? <li key={generateUniqueKey()} className="pl-1  py-2 flex flex-col border-l border-black-300" onDragStart={(event) => onDragStart(event, 'table', column)} draggable>
                     <div className="flex items-center ">

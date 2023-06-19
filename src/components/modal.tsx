@@ -8,10 +8,16 @@ interface IModel{
     onCloseDialog:Function,
     tittle?:ReactNode|string,
     body:ReactNode,
-    description?:ReactNode|string
+    description?:ReactNode|string,
+    minWidth?:string | number | undefined,
+    minHeight?:string | number | undefined,
+    maxWidth?:string | number | undefined,
+    maxHeight?:string | number | undefined,
+    width?:string | number | undefined,
+    height?:string | number | undefined,
 }
 
-export default function Modal( {isOpen,  body, onCloseDialog,description, tittle}: IModel ) {
+export default function Modal( {isOpen,  body, onCloseDialog,description, tittle, height,minHeight,minWidth,width,maxHeight,maxWidth}: IModel ) {
 
 
   return (
@@ -31,7 +37,8 @@ export default function Modal( {isOpen,  body, onCloseDialog,description, tittle
             <div className="fixed inset-0 bg-black-100 bg-opacity-25" />
           </Transition.Child>
 
-          <div className="fixed inset-0 overflow-y-auto">
+          <div className="fixed inset-0 overflow-y-auto"
+          >
             <div className="flex min-h-full items-center justify-center p-4 text-center">
               <Transition.Child
                 as={Fragment}
@@ -42,19 +49,26 @@ export default function Modal( {isOpen,  body, onCloseDialog,description, tittle
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-black-300 p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="w-full  max-w-md transform overflow-hidden rounded-2xl bg-black-300 p-6 text-left align-middle shadow-xl transition-all"
+                style={{ maxHeight, maxWidth, minWidth, minHeight, width, height }}
+                >
                   <Dialog.Title
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-200"
                   >
                     {tittle}
                   </Dialog.Title>
+
+                  <Dialog.Description as="div" className="mt-4 w-full overflow-y-auto">
                   <div className="mt-2 flex flex-col">
                     <p className="text-sm text-gray-500">
                      {description}
                     </p>
                     {body}
                   </div>
+              </Dialog.Description>
+                  
+                 
 
                 </Dialog.Panel>
               </Transition.Child>

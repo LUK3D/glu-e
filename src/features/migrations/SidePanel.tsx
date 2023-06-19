@@ -7,7 +7,9 @@ import Modal from "../../components/modal";
 import { useState } from "react";
 import { validateTableName } from "../../utls/validator";
 import NewTableForm from "./components/newTableForm";
-// import { getAIModels } from "../../core/ai";
+import { getAIModels } from "../../core/ai";
+import OpenAiIcon from "../../components/openAiIcon";
+import AiDialog from "./components/AIDialog";
 
 
 interface ISidePanel{
@@ -23,10 +25,22 @@ export  function SidePanel({appStore}:ISidePanel) {
     const [creatingTable, setCreatingTable] = useState<boolean>(false);
     const [tableNameInput, setTableNameInput] = useState<string>('');
     const [creatingColumn, setCreatingColumn] = useState<boolean>(false);
+    const [isGeneratingWIthAi, setIsGeneratingWIthAi] = useState<boolean>(false);
     const [columnNameInput, setColumnNameInput] = useState<IColumnComposition>({table:'', column:''});
 
 
     const [seachingWord, setSearchingWord] = useState<string>("");
+
+
+    const onGenerateWithAi = async (organization:string,apiKey:string, description:string)=>{
+        console.log(organization,apiKey, description);
+        appStore.setAiCredencials({org:organization, key:apiKey});
+        if(appStore.openAi){
+           const tables = await getAIModels({key:apiKey, org:organization, description});
+            appStore.setTables(tables);
+           console.log(tables);
+        }
+    }
 
 
 
@@ -116,6 +130,18 @@ export  function SidePanel({appStore}:ISidePanel) {
        <NewTableForm onCancel={cancelColumnCreation} onComplete={createColumn} ></NewTableForm>
     }
     ></Modal>
+    {/* GENERATING WITH AI MODAL */}
+    <Modal 
+        minWidth={'600px'}
+        isOpen={isGeneratingWIthAi} 
+        onCloseDialog={()=>setIsGeneratingWIthAi(false)}
+        tittle='Generate Database with GPT'
+        description='Follow the steps to generate the base of your project'
+        body={
+        <AiDialog onCancel={()=>setIsGeneratingWIthAi(false)} onComplete={onGenerateWithAi} ></AiDialog>
+        }
+    ></Modal>
+
     <div className="flex flex-col h-full w-full">
         <div className="w-full   p-5   flex flex-col">
             <div className="w-full  flex items-center bg-black-100 bg-opacity-25 rounded-md px-2">
@@ -128,12 +154,19 @@ export  function SidePanel({appStore}:ISidePanel) {
                 <MagnifyingGlassCircleIcon width={20}></MagnifyingGlassCircleIcon>
             </div>
             <div className="flex items-center">
-                <button onClick={()=>setCreatingTable(true)} className="px-2 py-2 bg-primary border border-primary bg-opacity-25 hover:bg-opacity-50 active:bg-opacity-60 transition-colors  text-gray-200 rounded-md mt-2 flex items-center justify-center">
+                <button 
+                    onClick={()=>setCreatingTable(true)} 
+                    className="text-sm px-2 py-2 bg-primary border border-primary bg-opacity-25 hover:bg-opacity-50 active:bg-opacity-60 transition-colors  text-gray-200 rounded-md mt-2 flex items-center justify-center">
                     <p className="mr-2">New Table</p> <PlusIcon width={20}></PlusIcon>
                 </button>
-                {/* <button onClick={()=>getAIModels()} className="px-2 py-2 ml-4 bg-primary border border-primary bg-opacity-25 hover:bg-opacity-50 active:bg-opacity-60 transition-colors  text-gray-200 rounded-md mt-2 flex items-center justify-center">
-                    <p className="mr-2">Generae</p> <PlusIcon width={20}></PlusIcon>
-                </button> */}
+                <button 
+                    onClick={()=>setIsGeneratingWIthAi(true)} 
+                    className=" text-sm px-2 py-2 ml-4 bg-green-500 border border-green-500 bg-opacity-25 hover:bg-opacity-50 active:bg-opacity-60 transition-colors  text-gray-200 rounded-md mt-2 flex items-center justify-center">
+                   <div className="w-6 h-6">
+                    <OpenAiIcon></OpenAiIcon> 
+                   </div>
+                   <p className="ml-2">Generate With AI</p>
+                </button>
             </div>
         </div>
         <div className="flex items-center px-4 py-2 text-lg">
@@ -142,6 +175,7 @@ export  function SidePanel({appStore}:ISidePanel) {
         </div>
         <div className="w-full h-[70vh] overflow-y-auto bg-black-200 bg-gradient-radial bg-radial-black-transparent bg-radial-size bg-radial-position">
             <ul>
+                {appStore.tables.length==0 && <li className="p-5 text-4xl opacity-50 font-bold"><span className="text-6xl">No tables 😅 </span><br/>Create a table or Generate with AI</li>}
                 {appStore.tables.map((table)=>
                 <OutlinerItem 
                     onAddColumnClick={()=>{
