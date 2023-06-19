@@ -165,7 +165,7 @@ export  function SidePanel({appStore}:ISidePanel) {
         isOpen={isGeneratingWIthAi} 
         onCloseDialog={()=>setIsGeneratingWIthAi(false)}
         tittle='Generate Database with GPT'
-        description='Follow the steps to generate the base of your project'
+        description='To use GPT-3.5 you need to provide the credentials. No information is stored. You are safe 😉'
         body={
         <AiDialog onCancel={()=>setIsGeneratingWIthAi(false)} onComplete={onGenerateWithAi} ></AiDialog>
         }

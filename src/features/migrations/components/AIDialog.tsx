@@ -13,7 +13,7 @@ export default function AiDialog({onCancel,onComplete}:{onComplete:Function,  on
    
 
   return (
-    <div className="w-full flex flex-col mt-10">
+    <div className="w-full flex flex-col mt-2">
            <div className="w-full flex">
                 <div className=" w-full  rounded-2xl bg-transparent p-2">
                     <Disclosure as="div" className="mt-2">
@@ -32,7 +32,7 @@ export default function AiDialog({onCancel,onComplete}:{onComplete:Function,  on
                                 <DocumentTextIcon width={20} className="text-primary"></DocumentTextIcon>
                                 <input 
                                     type="text" 
-                                    placeholder="Organization" 
+                                    placeholder="Organization ID                                    " 
                                     className=" py-2 pl-2 bg-transparent outline-none w-full placeholder:text-gray-400 text-white"
                                     onChange={(e)=>{
                                         setOrganization(e.target.value);
@@ -71,7 +71,9 @@ export default function AiDialog({onCancel,onComplete}:{onComplete:Function,  on
                     )}
                     </Disclosure>
 
-                    <div className="w-full  flex items-start bg-black-200 bg-opacity-50 rounded-md px-2 mt-4">
+                    <p className="text-xs text-gray-500 mt-4">What kind of project are you trying to create? Eg: Social network</p>
+
+                    <div className="w-full  flex items-start bg-black-200 bg-opacity-50 rounded-md px-2 mt-2">
                                 <DocumentTextIcon width={20} className="text-primary mt-2"></DocumentTextIcon>
                                 <textarea 
                                     placeholder="Project Description" 
