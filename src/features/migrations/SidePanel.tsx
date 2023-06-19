@@ -51,7 +51,7 @@ export  function SidePanel({appStore}:ISidePanel) {
         myConsole.log([
             {
                 type: ConsoleLogTypes.message,
-                message:"Generating Tables for ##",
+                message:"Generating Tables for ## . Please wait 😊",
                 highights:[
                     description.substring(0,(description.length<100)?description.length:100)
                 ]
@@ -64,7 +64,7 @@ export  function SidePanel({appStore}:ISidePanel) {
             myConsole.log([
                 {
                     type: ConsoleLogTypes.success,
-                    message:"Done! ## Generated",
+                    message:`Done! ${tables.length} ## Created Successfully 🎉`,
                     highights:["Tables"]
                 }
             ]);

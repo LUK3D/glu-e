@@ -14,21 +14,20 @@ export default function Console({myConsole}:{myConsole:IConsoleStore}) {
         return [error.message];
        }
 
-       for (let i = 0; i < error.highights.length; i++) {
-        if(error.highights[i].length>0){
+
+       for (let i = 0; i <= error.highights.length; i++) {
             result.push(
                 <div key={generateUniqueKey()}>
                     <span >{erros[i]}</span> 
-                    <span 
+                   {error.highights[i]?.length>0 && <span 
                         className={`
-                            ${error.type == ConsoleLogTypes.error?'bg-red-500 bg-opacity-70 text-white' : ''}
-                            ${error.type == ConsoleLogTypes.warning?'bg-yellow-500 bg-opacity-70 text-white' : ''}
-                            ${error.type == ConsoleLogTypes.success?'bg-green-500 bg-opacity-70 text-white' : ''}
-                            bg-black-100 italic font-bold bg-opacity-25 mx-1 px-2 py-1 rounded-md
+                            ${error.type == ConsoleLogTypes.error?'bg-red-500 bg-opacity-30 text-white' : ''}
+                            ${error.type == ConsoleLogTypes.warning?'bg-yellow-500 bg-opacity-30 text-white' : ''}
+                            ${error.type == ConsoleLogTypes.success?'bg-green-500 bg-opacity-30 text-white' : ''}
+                            bg-black-100 italic  bg-opacity-25 mx-1 px-2 py-1 rounded-md
                         `}>{error.highights[i]}
-                    </span>
+                    </span>}
                 </div>);
-        }
     
        }
 
