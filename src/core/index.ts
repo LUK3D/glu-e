@@ -16,72 +16,76 @@ export function validateNode({ nodes, edges }: { nodes: Node[]; edges: Edge[]}):
     let result: IRelation[] = [];
 
     let hasBugs = false;
+
+    let nodesMap:Map<string,Node> = new Map();
+    let leftNodes:Map<string,Node> = new Map();
+    let rightNodes:Map<string,Node> = new Map();
+
+
+    let relationalNodes:Map<string,Node> = new Map();
+    
+
+
   
     if(nodes.length<=0 || edges.length <=0){
         return [result, hasBugs];
     }
 
-    let relation:IRelation = {
-        errors:[]
-    }
+    nodes.forEach(node => {
+        if(node.type == 'relation'){
+            relationalNodes.set(node.id, node);
+        }
+        nodesMap.set(node.id, node);
+    });
 
-    for (let i = 0; i < nodes.length; i++) {
-        const currentNode = nodes[i];
-    
-        edges.forEach(source => {
-            if(currentNode.id == source.source){
-                if(currentNode.type != 'relation'){
-                    relation.from = currentNode;
+    let leftCount = 0;
+    edges.forEach(edge => {
+            let rnt = relationalNodes.get(edge.target);
+            //If the node on the Right is a relational node, we get the node on the Left and defined it as start node.
+            if(rnt){
+                let n = nodesMap.get(edge.source)
+                if(n){
+                    leftNodes.set(`${rnt.id}|${leftCount}`,n);
+                    leftCount++;
                 }
             }
-
-            edges.forEach(target => {
-                if(currentNode.id == target.target){
-                    if(currentNode.type != 'relation'){
-                        relation.to = currentNode;
-                    }
+            let rns = relationalNodes.get(edge.source);
+            //If the node on the left is a relational node, we get the node on the Left and defined it as start node.
+            if(rns){
+                let n = nodesMap.get(edge.target)
+                if(n){
+                    rightNodes.set(rns.id,n);
+                    
                 }
+            }
+    });
+
+    let arr =Array.from(leftNodes.keys());
+    console.table(arr);
+
+    arr.forEach((n)=>{
+        let ln = leftNodes.get(n);
+        let rn = rightNodes.get(n.split('|')[0]);
+        let relation:IRelation = {
+            from:ln,
+            to:rn,
+            errors:[]
+        }
+
+        
+        if(relation.from?.data['column']['type']?.toString().toLowerCase() != relation.to?.data['column']['type']?.toString().toLowerCase()){
+            relation.errors.push({
+                type:ConsoleLogTypes.error,
+                message:`## of type ## Can't be related to ## of type ##`,
+                highights:[`${relation.from?.data['label']}`, `${relation.from?.data['column']['type']}`, `${relation.to?.data['label']}`, `${relation.to?.data['column']['type']}`]
             });
-
-            if(relation.from && relation.to){
-                if(relation.to.type != 'relation' && relation.from.type!= 'relation' ){
-                    if(relation.from.data['column']['type']?.toString().toLowerCase() != relation.to.data['column']['type']?.toString().toLowerCase()){
-                        relation.errors.push({
-                            type:ConsoleLogTypes.error,
-                            message:`## of type ## Can't be related to ## of type ##`,
-                            highights:[`${relation.from.data['label']}`, `${relation.from.data['column']['type']}`, `${relation.to.data['label']}`, `${relation.to.data['column']['type']}`]
-                        });
-                        hasBugs = true;
-                    }
-
-                    result.push(relation);
-                    relation = {
-                        errors:[]
-                    };
-                }
-            }
-            
-        });
+            hasBugs = true;
+        }
 
         if(relation.from && relation.to){
-            if(relation.to.type != 'relation' && relation.from.type!= 'relation' ){
-
-                if(relation.from.data['column']['type']?.toString().toLowerCase() != relation.to.data['column']['type']?.toString().toLowerCase()){
-                    relation.errors.push({
-                        type:ConsoleLogTypes.error,
-                        message:`## of type ## Can't be related to ## of type ##`,
-                        highights:[`${relation.from.data['label']}`, `${relation.from.data['column']['type']}`, `${relation.to.data['label']}`, `${relation.to.data['column']['type']}`]
-                    });
-                    hasBugs = true;
-                }
-
-                result.push(relation);
-                relation = {
-                    errors:[]
-                };
-            }
+            result.push(relation);
         }
-    }
+    })
 
     return [result, hasBugs];
     

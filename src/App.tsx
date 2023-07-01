@@ -8,7 +8,8 @@ import { ModelSidePanel, ModelWorkspace } from './features/models';
 import Console from './features/console/Console';
 import generateUniqueKey from './utls/generator';
 import { useLocalStorage } from 'react-use';
-import { IApp } from './types';
+import { ConsoleLogTypes, IApp } from './types';
+import { CodeBracketIcon } from '@heroicons/react/24/solid';
 
 interface ITab{
   label:string,
@@ -80,6 +81,17 @@ function App() {
             </button>
             <button onClick={loadProject} className='border-orange-500 border bg-orange-500 bg-opacity-25 text-white px-2 rounded-md mx-3' title='Load from disk'>
               <ArrowPathRoundedSquareIcon className='w-6 h-6'></ArrowPathRoundedSquareIcon>
+            </button>
+            <button onClick={()=>{
+              myConsole.log([{
+                    type:ConsoleLogTypes.warning,
+                    message:JSON.stringify(appStore.tables)
+                  }]
+                
+                )
+              // console.log(appStore.tables)
+            }} className='border-blue-500 border bg-blue-500 bg-opacity-25 text-white px-2 rounded-md mx-3' title='Load from disk'>
+              <CodeBracketIcon className='w-6 h-6'></CodeBracketIcon>
             </button>
         </div>
         <div className='tree-view flex flex-col w-full h-full'>

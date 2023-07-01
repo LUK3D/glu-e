@@ -41,10 +41,10 @@ export default function Console({myConsole}:{myConsole:IConsoleStore}) {
             <ul className='w-full h-full overflow-y-auto flex flex-col text-sm'>
                 {myConsole.errors.map((error, index)=>
                 <li key={generateUniqueKey()} className={`
-                    ${error.type == ConsoleLogTypes.error?'bg-red-500 bg-opacity-10 text-red-500' : ''} 
-                    ${error.type == ConsoleLogTypes.warning?'bg-yellow-500 bg-opacity-10 text-yellow-500' : ''} 
-                    ${error.type == ConsoleLogTypes.success?'bg-green-500 bg-opacity-10 text-green-500' : ''} 
-                    w-full flex items-center text-grey-500 
+                    ${error.type == ConsoleLogTypes.error?'bg-red-500 bg-opacity-10 text-red-500 border-red-500/20' : ''} 
+                    ${error.type == ConsoleLogTypes.warning?'bg-yellow-500 bg-opacity-10 text-yellow-500 border-yellow-500/20' : ''} 
+                    ${error.type == ConsoleLogTypes.success?'bg-green-500 bg-opacity-10 text-green-500 border-green-500/20' : ''} 
+                    w-full flex items-center text-grey-500  border-b
                 `}><p className='py-2 w-10 flex items-center justify-center border-r border-black-400 mr-2'>{index+1}</p>{getMessage(error)}</li>
 
                 )}
