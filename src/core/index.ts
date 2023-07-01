@@ -77,7 +77,7 @@ export function validateNode({ nodes, edges }: { nodes: Node[]; edges: Edge[]}):
             relation.errors.push({
                 type:ConsoleLogTypes.error,
                 message:`## of type ## Can't be related to ## of type ##`,
-                highights:[`${relation.from?.data['label']}`, `${relation.from?.data['column']['type']}`, `${relation.to?.data['label']}`, `${relation.to?.data['column']['type']}`]
+                highights:[relation.from?.data['label'], relation.from?.data['column']['type'], relation.to?.data['label'], relation.to?.data['column']['type']]
             });
             hasBugs = true;
         }

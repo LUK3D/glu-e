@@ -166,6 +166,18 @@ export const useAppStore = create<IApp>((set, get) => ({
             return t;
         })
     }))
+ },
+
+ removeTable:(table:ITable)=>{
+    set((state)=>({tables:state.tables.filter((t)=>t.name!=table.name)}));
+ },
+ removeColumn:(table:ITable,column:IColumn)=>{
+    set((state)=>({tables:state.tables.map((t)=>{
+        if(t.name == table.name){
+            table.columns = table.columns.filter((c)=>c.name!=column.name);
+        }
+        return t;
+    })}))
  }
 
  

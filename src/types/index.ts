@@ -104,4 +104,6 @@ export interface IApp{
     loadSave:(appStorage: IApp)=>void,
     expandAllTables: ()=>void,
     setAiCredencials: ({org, key}:{org:string, key:string})=>void,
+    removeTable:(table:ITable)=>void,
+    removeColumn:(table:ITable,column:IColumn)=>void
 }

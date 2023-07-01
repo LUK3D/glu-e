@@ -211,6 +211,21 @@ export  function SidePanel({appStore}:ISidePanel) {
                         setColumnNameInput({...columnNameInput, table:table.name});
                         setCreatingColumn(true);
                     }} 
+                    onRemoveColumn={(table,column)=>{
+                        myConsole.log([{
+                            message:`✅ Column ## from Table ## removed successfuly! `,
+                            type:ConsoleLogTypes.message,
+                            highights:[column.name, table.name]
+                        }]);
+                        appStore.removeColumn(table,column);
+                    }}
+                    onRemoveTable={(table)=>{
+                        myConsole.log([{
+                            message:`✅ Table ${table.name} removed successfuly! `,
+                            type:ConsoleLogTypes.message,
+                        }]);
+                        appStore.removeTable(table);
+                    }}
                     searchingWord={seachingWord}
                     key={`table_${table.name}`} 
                     table={table} 
