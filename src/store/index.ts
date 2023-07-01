@@ -172,6 +172,32 @@ export const useAppStore = create<IApp>((set, get) => ({
     set((state)=>({tables:state.tables.filter((t)=>t.name!=table.name)}));
  },
  removeColumn:(table:ITable,column:IColumn)=>{
+    let relations = get().relations;
+    const rf = get().reacFlow;
+
+    console.log("REL:", relations);
+    
+    relations.filter((r)=>{
+        const names = r.from?.data['label'].split('.');
+        let fromCheck =  names[0]!=table.name && names[1] !=column.name;
+
+        console.log("COMPARE", r.from?.data['label'], table.name, column.name);
+
+        const names2 = r.to?.data['label'].split('.');
+        let toCheck =  names2[0]!=table.name && names2[1] !=column.name;
+
+        if(!fromCheck){
+            rf?.setNodes(rf.getNodes().filter((n)=>n.id != r.from?.id));
+        }
+        if(!toCheck){
+            rf?.setNodes(rf.getNodes().filter((n)=>n.id != r.to?.id));
+        }
+
+        return fromCheck && toCheck ;
+
+    })
+
+
     set((state)=>({tables:state.tables.map((t)=>{
         if(t.name == table.name){
             table.columns = table.columns.filter((c)=>c.name!=column.name);

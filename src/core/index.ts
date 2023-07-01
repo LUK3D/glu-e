@@ -87,6 +87,8 @@ export function validateNode({ nodes, edges }: { nodes: Node[]; edges: Edge[]}):
         }
     })
 
+    console.log(result);
+
     return [result, hasBugs];
     
 }

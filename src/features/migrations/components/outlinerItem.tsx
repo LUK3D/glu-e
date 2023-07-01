@@ -50,7 +50,7 @@ export default function OutlinerItem({onAddColumnClick, onTableClick, table, sea
                                 autoEscape={true}
                                 textToHighlight={column.name}
                             />
-                            <span className="text-xs text-yellow-500 text-opacity-50">({column.type})</span></p>
+                            <span className="text-xs text-yellow-500 text-opacity-50"> ({column.type})</span></p>
                        </div>
                         <button
                         title="Remove column"
